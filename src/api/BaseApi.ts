@@ -3,7 +3,6 @@ import config from "../api-config";
 import { BaseApiGetType, BaseApiType } from "../types";
 
 const BASE_URL = `${config.ApiEndpoint}`;
-const PAGE_LIMIT = 20;
 
 function buildUrl(path: string, id?: number) {
     return `${BASE_URL}${path}${id ? "/" + id : ""}`;

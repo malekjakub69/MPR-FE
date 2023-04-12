@@ -1,3 +1,4 @@
+import * as AuthApi from "./AuthApi";
 import * as BaseApi from "./BaseApi";
 
-export { BaseApi };
+export { AuthApi, BaseApi };

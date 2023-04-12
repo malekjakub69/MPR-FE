@@ -1,52 +1,39 @@
-import { Link, Outlet, RootRoute, Route, Router, RouterProvider } from "@tanstack/react-router";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+
+import { FC, useEffect } from "react";
+import { IcoLoader } from "../assets/icons";
 import "./App.css";
+import { NotificationCenter } from "./components/NotificationCenter";
+import { useAuth } from "./context/AuthContext";
+import { Dashboard, Login, MainLayout, ProjectDetail } from "./pages";
 
-import { About, Homepage } from "./pages";
+const PrivatePlantRoute: FC = () => {
+    const { authenticate, authState } = useAuth();
 
-// Create a root route
-const rootRoute = new RootRoute({
-    component: Root,
-});
+    useEffect(() => {
+        if (authState !== "idle") return;
+        authenticate();
+    }, [authenticate, authState]);
 
-function Root() {
-    return (
-        <>
-            <div>
-                <Link to="/">Home</Link>
-                <Link to="/about">About</Link>
-            </div>
-            <hr />
-            <Outlet />
-        </>
-    );
-}
+    if (authState === "fail") return <Navigate to="/login" />;
+    if (authState === "inProgress") return <IcoLoader className={"m-auto animate-spin w-10 fill-gray-500"} />;
 
-// Create an index route
-const indexRoute = new Route({
-    getParentRoute: () => rootRoute,
-    path: "/",
-    component: Homepage,
-});
-
-const aboutRoute = new Route({
-    getParentRoute: () => rootRoute,
-    path: "/about",
-    component: About,
-});
-
-// Create the route tree using your routes
-const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
-
-// Create the router using your route tree
-const router = new Router({ routeTree });
-
-// Register your router for maximum type safety
-declare module "@tanstack/router" {
-    interface Register {
-        router: typeof router;
-    }
-}
+    return <MainLayout />;
+};
 
 export default function App() {
-    return <RouterProvider router={router} />;
+    return (
+        <div className="App">
+            <NotificationCenter />
+            <Router>
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="*" element={<PrivatePlantRoute />}>
+                        <Route path="project/:projectId" element={<ProjectDetail />} />
+                        <Route path="*" element={<Dashboard />} />
+                    </Route>
+                </Routes>
+            </Router>
+        </div>
+    );
 }
