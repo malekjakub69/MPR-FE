@@ -61,3 +61,40 @@
 .createProject button:hover {
     opacity: 0.6;
 }
+
+.risks {
+    margin-top: 20px;
+}
+
+.risk {
+    display: inline-block;
+    margin-right: 10px;
+    background-color: rgb(104, 202, 234);
+    color: white;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px; 
+}
+
+.categoryInput {
+    display: inline-block;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.categoryInput a {
+    margin-left: 50px;
+    background-color: #1d3746;
+    border-radius: 10px;
+    padding: 15px;
+    color: white;
+    cursor: pointer;
+}
+
+.categoryInput a:hover {
+    opacity: 0.6;
+}
+
+.categoryInput input {
+    width: 35%;
+}

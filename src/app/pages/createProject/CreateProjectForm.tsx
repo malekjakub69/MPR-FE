@@ -17,6 +17,8 @@ interface IProps {
 export const CreateProjectForm: FC<IProps> = () => {
     const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [checkedState, setCheckedState] = useState(false)
+    const [category, setCategory] = useState("")
+    const [categories, setCategories] = useState<string[]>([]); 
     const [endDate, setEndDate] = useState<Date | null>(new Date(Date.now() + ( 3600 * 1000 * 24)));
     const initialValues = {
         name: "",
@@ -28,9 +30,19 @@ export const CreateProjectForm: FC<IProps> = () => {
         description: string().required("Toto pole je povinné"),
     });
 
+
     // TODO -> functionality of button after creating new project (submitting form)
     const createProject = () => {
         console.log("Creating project!");
+    }
+
+    const addCategory = () => {
+        if(category !== "") {
+            let tmpArray : string[] = categories
+            tmpArray.push(category)
+            setCategory("")
+            setCategories(tmpArray)
+        }
     }
 
     return (
@@ -75,6 +87,28 @@ export const CreateProjectForm: FC<IProps> = () => {
                     <div className="scales">
                         Zmenšený rozsah škál: <Checkbox {...label} className="check" checked={checkedState} onChange={() => setCheckedState(!checkedState)}/>
                     </div>
+                    <div className="risks">
+                        Kategórie rizík:
+                        <br />
+                        {
+                            categories.map((category, index) => {
+                                return(
+                                    <div className="risk">
+                                        {category}
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                    <div className="categoryInput">
+                        <input className="border-2 text-sm focus:outline-none disabled:bg-transparent rounded-md p-2 disabled:opacity-100 text-gray-700 disabled:text-gray-600 focus:border-b-[#323e99]"
+                        placeholder="Kategorie" value={category} onChange={(e) => {setCategory(e.target.value)}}>
+                        </input>
+                        <a onClick={addCategory}>
+                            Přidat kategorii
+                        </a>
+                    </div>
+                    <br />
                     <button type="submit">
                         Vytvořit projekt
                     </button>
