@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import "./Dashboard.css";
 
 interface IProps {
     className?: string;
 }
 
-export const DashboardProjects: FC<IProps> = ({}) => {
+export const DashboardProjects: FC<IProps> = () => {
     // TODO -> this is just prepared CSS -> when Dashboard fetches json (array with project infos) -> it will be passed here and in return() will be .map function which will display info as below (lorem ipsum replaced)
     // TODO button onClick navigate to subpage with project info
     return (
