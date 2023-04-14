@@ -1,9 +1,10 @@
-import { Formik } from "formik";
+import { Formik, Field } from "formik";
 import { FC, useState  } from "react";
 import { object, string } from "yup";
 import { CreateProjectInputFormik } from "../../components/CreateProjectInput";
 import "./CreateRisk.css";
 import { RadioGroup, Radio, FormControlLabel } from '@mui/material';
+import { ERiskCats, ERiskStatus, IRisk } from "../../../types";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -13,15 +14,15 @@ interface IProps {
 
 
 export const CreateRiskForm: FC<IProps> = () => {
-    const [proability, setProbability] = useState("Malá")
-    const [impact, setImpact] = useState("Malý")
-    const [status, setStatus] = useState("Koncept")
     const initialValues = {
         name: "",
         description: "",
         danger: "",
         trigger: "",
-        reaction: ""
+        reaction: "",
+        status: ERiskStatus.CONCEPT,
+        impact: ERiskCats.LOW,
+        probability: ERiskCats.LOW
     };
 
     const loginFormValidationSchema = object().shape({
@@ -33,13 +34,13 @@ export const CreateRiskForm: FC<IProps> = () => {
     });
 
     // TODO -> functionality of button after creating new risk (submitting form)
-    const createProject = () => {
-        console.log("Creating Risk!");
+    const createProject = (data: IRisk) => {
+        console.log("Creating Risk!", data.impact);
     }
     // TODO -> in probability and impact radio boxes (if project is using reduced scales then other radio buttons must be disabled (TINY, EXTREME must be disabled)) add prop to FormControlLabel disabled={condition}
     return (
         <Formik onSubmit={createProject} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
-            {({ handleSubmit }) => (
+            {({ handleSubmit, values, setFieldValue }) => (
                 <form onSubmit={handleSubmit}>
                     <CreateProjectInputFormik
                         className="my-6 text-#1d3746 w-100"
@@ -85,39 +86,39 @@ export const CreateRiskForm: FC<IProps> = () => {
                     <RadioGroup
                         row
                         className='radio'
-                        value={proability}
-                        name="radio-buttons-group"
-                        onChange={(e)=> setProbability(e.target.value)}   
+                        value={values.probability}
+                        name="probability"
+                        onChange={(val) => {setFieldValue("probability", val.target.value)}}    
                     >
-                        <FormControlLabel value={"Nepatrná"} control={<Radio />} label="Nepatrná" />
-                        <FormControlLabel value={"Malá"} control={<Radio />} label="Malá" />
-                        <FormControlLabel value={"Střední"} control={<Radio />} label="Střední" />
-                        <FormControlLabel value={"Velká"} control={<Radio />} label="Velká" />
-                        <FormControlLabel value={"Mimořádne velká"} control={<Radio />} label="Mimořádne velká" />
+                        <FormControlLabel value={ERiskCats.TINY} control={<Radio />} label="Nepatrná" />
+                        <FormControlLabel value={ERiskCats.LOW} control={<Radio />} label="Malá" />
+                        <FormControlLabel value={ERiskCats.MEDIUM} control={<Radio />} label="Střední" />
+                        <FormControlLabel value={ERiskCats.HIGH} control={<Radio />} label="Velká" />
+                        <FormControlLabel value={ERiskCats.EXTREME} control={<Radio />} label="Mimořádne velká" />
                     </RadioGroup>
                     <p>Dopad rizika</p>
                     <RadioGroup
                         row
                         className='radio'
-                        value={impact}
-                        name="radio-buttons-group"
-                        onChange={(e)=> setImpact(e.target.value)}   
+                        value={values.impact}
+                        name="impact"
+                        onChange={(val) => {setFieldValue("impact", val.target.value)}}    
                     >
-                        <FormControlLabel value={"Nepatrný"} control={<Radio />} label="Nepatrný" />
-                        <FormControlLabel value={"Malý"} control={<Radio />} label="Malý" />
-                        <FormControlLabel value={"Cititelný"} control={<Radio />} label="Cititelný" />
-                        <FormControlLabel value={"Kritický"} control={<Radio />} label="Kritický" />
-                        <FormControlLabel value={"Katastrofický"} control={<Radio />} label="Katastrofický" />
+                        <FormControlLabel value={ERiskCats.TINY} control={<Radio />} label="Nepatrný" />
+                        <FormControlLabel value={ERiskCats.LOW} control={<Radio />} label="Malý" />
+                        <FormControlLabel value={ERiskCats.MEDIUM} control={<Radio />} label="Cititelný" />
+                        <FormControlLabel value={ERiskCats.HIGH} control={<Radio />} label="Kritický" />
+                        <FormControlLabel value={ERiskCats.EXTREME} control={<Radio />} label="Katastrofický" />
                     </RadioGroup>
                     <p>Stav rizika</p>
                     <RadioGroup
                         row
                         className='radio'
-                        value={status}
-                        name="radio-buttons-group"
-                        onChange={(e)=> setStatus(e.target.value)}   
+                        value={values.status}
+                        name="status"
+                        onChange={(val) => {setFieldValue("status", val.target.value)}}  
                     >
-                        <FormControlLabel value={"Koncept"} control={<Radio />} label="Koncept" />
+                        <FormControlLabel value={ERiskStatus.CONCEPT} control={<Radio />} label="Koncept" />
                     </RadioGroup>
                     <button type="submit">
                         Vytvořit riziko
