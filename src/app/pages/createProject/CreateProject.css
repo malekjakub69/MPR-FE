@@ -98,3 +98,7 @@
 .categoryInput input {
     width: 35%;
 }
+
+.scales .check {
+    margin-left: 5px;
+}

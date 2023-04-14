@@ -1,4 +1,4 @@
-import { Formik } from "formik";
+import { Field, Formik } from "formik";
 import { FC, useState  } from "react";
 import { object, string } from "yup";
 import { CreateProjectInputFormik } from "../../components/CreateProjectInput";
@@ -6,6 +6,7 @@ import "./CreateProject.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Checkbox from '@mui/material/Checkbox';
+import { FormControlLabel } from "@mui/material";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -16,13 +17,13 @@ interface IProps {
 
 export const CreateProjectForm: FC<IProps> = () => {
     const [startDate, setStartDate] = useState<Date | null>(new Date());
-    const [checkedState, setCheckedState] = useState(false)
     const [category, setCategory] = useState("")
     const [categories, setCategories] = useState<string[]>([]); 
     const [endDate, setEndDate] = useState<Date | null>(new Date(Date.now() + ( 3600 * 1000 * 24)));
     const initialValues = {
         name: "",
         description: "",
+        toggle: false
     };
 
     const loginFormValidationSchema = object().shape({
@@ -31,9 +32,9 @@ export const CreateProjectForm: FC<IProps> = () => {
     });
 
 
-    // TODO -> functionality of button after creating new project (submitting form)
-    const createProject = () => {
-        console.log("Creating project!");
+    // TODO -> functionality of button after creating new project (submitting form), change any to specific type
+    const createProject = (values: any) => {
+        console.log("Creating project!", values);
     }
 
     const addCategory = () => {
@@ -47,7 +48,7 @@ export const CreateProjectForm: FC<IProps> = () => {
 
     return (
         <Formik onSubmit={createProject} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
-            {({ handleSubmit }) => (
+            {({ handleSubmit, handleChange, values }) => (
                 <form onSubmit={handleSubmit}>
                     <CreateProjectInputFormik
                         className="my-6 text-#1d3746 w-100"
@@ -85,7 +86,13 @@ export const CreateProjectForm: FC<IProps> = () => {
                         </div>
                     </div>
                     <div className="scales">
-                        Zmenšený rozsah škál: <Checkbox {...label} className="check" checked={checkedState} onChange={() => setCheckedState(!checkedState)}/>
+                        Zmenšený rozsah škál: 
+                        <FormControlLabel control={<Checkbox checked={values.toggle} />}
+                            label=""
+                            name="toggle"
+                            onChange={handleChange}
+                            className="check"
+                        />
                     </div>
                     <div className="risks">
                         Kategórie rizík:
