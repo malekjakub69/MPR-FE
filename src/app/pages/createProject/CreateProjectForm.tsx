@@ -16,14 +16,14 @@ interface IProps {
 
 
 export const CreateProjectForm: FC<IProps> = () => {
-    const [startDate, setStartDate] = useState<Date | null>(new Date());
     const [category, setCategory] = useState("")
     const [categories, setCategories] = useState<string[]>([]); 
-    const [endDate, setEndDate] = useState<Date | null>(new Date(Date.now() + ( 3600 * 1000 * 24)));
     const initialValues = {
         name: "",
         description: "",
-        toggle: false
+        toggle: false,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + ( 3600 * 1000 * 24))
     };
 
     const loginFormValidationSchema = object().shape({
@@ -48,7 +48,7 @@ export const CreateProjectForm: FC<IProps> = () => {
 
     return (
         <Formik onSubmit={createProject} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
-            {({ handleSubmit, handleChange, values }) => (
+            {({ handleSubmit, handleChange, values, setFieldValue }) => (
                 <form onSubmit={handleSubmit}>
                     <CreateProjectInputFormik
                         className="my-6 text-#1d3746 w-100"
@@ -72,16 +72,16 @@ export const CreateProjectForm: FC<IProps> = () => {
                             <div>Začátek projektu:</div>
                             <DatePicker
                                 className="calendar"
-                                selected={startDate}
-                                onChange={date => date && setStartDate(date)}
+                                selected={values.startDate}
+                                onChange={(val) => {setFieldValue("startDate", val)}}
                             />
                         </div>
                         <div className="column">
                             <div>Konec projektu:</div>
                             <DatePicker
                                 className="calendar"
-                                selected={endDate}
-                                onChange={date => date && setEndDate(date)}
+                                selected={values.endDate}
+                                onChange={(val) => {setFieldValue("endDate", val)}}
                             />
                         </div>
                     </div>
