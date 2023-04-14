@@ -48,7 +48,7 @@ export const CreateProjectForm: FC<IProps> = () => {
 
     return (
         <Formik onSubmit={createProject} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
-            {({ handleSubmit, handleChange, values, setFieldValue, errors }) => (
+            {({ handleSubmit, handleChange, values, setFieldValue, errors, touched }) => (
                 <form onSubmit={handleSubmit}>
                     <CreateProjectInputFormik
                         className="my-6 text-#1d3746 w-100"
@@ -119,7 +119,7 @@ export const CreateProjectForm: FC<IProps> = () => {
                                         Přidat kategorii
                                     </button>
                                 </div>
-                                {errors.categories !== "" && <div className="errorMessage">{errors.categories}</div>}
+                                {errors.categories && touched.categories ? <div className="errorMessage">{errors.categories}</div> : null}
                             </div>
                         )}
                     />
