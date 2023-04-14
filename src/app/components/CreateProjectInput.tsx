@@ -36,7 +36,7 @@ export const CreateProjectInput: FC<IProps> = ({ label, onChange, onChangeRaw, v
                     autoComplete="off"
                     placeholder={placeholder}
                 />
-                {error != "" && <div className="text-red-500 bottom-0 pt-1 absolute translate-y-full">{error}</div>}
+                {error != "" && <div className="errorMessage">{error}</div>}
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
-import { Field, Formik } from "formik";
+import { Field, Formik, FieldArray, FieldArrayRenderProps } from "formik";
 import { FC, useState  } from "react";
-import { object, string } from "yup";
+import { array, object, string } from "yup";
 import { CreateProjectInputFormik } from "../../components/CreateProjectInput";
 import "./CreateProject.css";
 import DatePicker from "react-datepicker";
@@ -17,18 +17,19 @@ interface IProps {
 
 export const CreateProjectForm: FC<IProps> = () => {
     const [category, setCategory] = useState("")
-    const [categories, setCategories] = useState<string[]>([]); 
     const initialValues = {
         name: "",
         description: "",
         toggle: false,
         startDate: new Date(),
-        endDate: new Date(Date.now() + ( 3600 * 1000 * 24))
+        endDate: new Date(Date.now() + ( 3600 * 1000 * 24)),
+        categories: []
     };
 
     const loginFormValidationSchema = object().shape({
         name: string().required("Toto pole je povinné"),
         description: string().required("Toto pole je povinné"),
+        categories: array().min(1, 'Minimum of 1 friends'),
     });
 
 
@@ -37,18 +38,16 @@ export const CreateProjectForm: FC<IProps> = () => {
         console.log("Creating project!", values);
     }
 
-    const addCategory = () => {
+    const addCategory = (array: FieldArrayRenderProps) => {
         if(category !== "") {
-            let tmpArray : string[] = categories
-            tmpArray.push(category)
+            array.push(category)
             setCategory("")
-            setCategories(tmpArray)
         }
     }
 
     return (
         <Formik onSubmit={createProject} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
-            {({ handleSubmit, handleChange, values, setFieldValue }) => (
+            {({ handleSubmit, handleChange, values, setFieldValue, errors }) => (
                 <form onSubmit={handleSubmit}>
                     <CreateProjectInputFormik
                         className="my-6 text-#1d3746 w-100"
@@ -94,28 +93,35 @@ export const CreateProjectForm: FC<IProps> = () => {
                             className="check"
                         />
                     </div>
-                    <div className="risks">
-                        Kategórie rizík:
-                        <br />
-                        {
-                            categories.map((category, index) => {
-                                return(
-                                    <div className="risk">
-                                        {category}
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
-                    <div className="categoryInput">
-                        <input className="border-2 text-sm focus:outline-none disabled:bg-transparent rounded-md p-2 disabled:opacity-100 text-gray-700 disabled:text-gray-600 focus:border-b-[#323e99]"
-                        placeholder="Kategorie" value={category} onChange={(e) => {setCategory(e.target.value)}}>
-                        </input>
-                        <a onClick={addCategory}>
-                            Přidat kategorii
-                        </a>
-                    </div>
-                    <br />
+                    <FieldArray 
+                        name="categories"
+                        render={arrayHelpers => (
+                            <div>
+                                <div className="risks">
+                                    Kategorie rizík:
+                                    <br />
+                                    {
+                                        values.categories.map((category, index) => {
+                                            return(
+                                                <div className="risk" key={index}>
+                                                    {category}
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                                <div className="categoryInput">
+                                    <input className="border-2 text-sm focus:outline-none disabled:bg-transparent rounded-md p-2 disabled:opacity-100 text-gray-700 disabled:text-gray-600 focus:border-b-[#323e99]"
+                                    placeholder="Kategorie" value={category} onChange={(e) => {setCategory(e.target.value)}}>
+                                    </input>
+                                    <button type="button" onClick={() => addCategory(arrayHelpers)}>
+                                        Přidat kategorii
+                                    </button>
+                                </div>
+                                {errors.categories !== "" && <div className="errorMessage">{errors.categories}</div>}
+                            </div>
+                        )}
+                    />
                     <button type="submit">
                         Vytvořit projekt
                     </button>

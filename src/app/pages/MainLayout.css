@@ -1,3 +1,4 @@
 .mainLayout {
     background-color: #fafafa;
+    overflow: scroll !important
 }

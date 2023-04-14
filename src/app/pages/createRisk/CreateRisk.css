@@ -35,3 +35,7 @@
     resize: none;
     line-height:20px;
 }
+
+.errorMessage {
+    color: red
+}

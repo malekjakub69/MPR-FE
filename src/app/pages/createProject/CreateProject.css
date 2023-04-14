@@ -79,19 +79,20 @@
 .categoryInput {
     display: inline-block;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
-.categoryInput a {
+.categoryInput button {
     margin-left: 50px;
     background-color: #1d3746;
     border-radius: 10px;
     padding: 15px;
     color: white;
     cursor: pointer;
+    width:30%
 }
 
-.categoryInput a:hover {
+.categoryInput button:hover {
     opacity: 0.6;
 }
 
@@ -101,4 +102,8 @@
 
 .scales .check {
     margin-left: 5px;
+}
+
+.errorMessage {
+    color: red
 }
