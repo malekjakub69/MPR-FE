@@ -1,12 +1,13 @@
 import { Field, Formik, FieldArray, FieldArrayRenderProps } from "formik";
 import { FC, useState  } from "react";
-import { array, object, string } from "yup";
+import { array, boolean, object, string } from "yup";
 import { CreateProjectInputFormik } from "../../components/CreateProjectInput";
 import "./CreateProject.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Checkbox from '@mui/material/Checkbox';
 import { FormControlLabel } from "@mui/material";
+import { IProject } from "../../../types";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -20,22 +21,22 @@ export const CreateProjectForm: FC<IProps> = () => {
     const initialValues = {
         name: "",
         description: "",
-        toggle: false,
+        scale: false,
         startDate: new Date(),
         endDate: new Date(Date.now() + ( 3600 * 1000 * 24)),
-        categories: []
+        categories: [],
     };
 
     const loginFormValidationSchema = object().shape({
         name: string().required("Toto pole je povinné"),
         description: string().required("Toto pole je povinné"),
-        categories: array().min(1, 'Minimum of 1 friends'),
+        categories: array().min(1, 'Minimálne jedna kategorie je povinná'),
     });
 
 
-    // TODO -> functionality of button after creating new project (submitting form), change any to specific type
-    const createProject = (values: any) => {
-        console.log("Creating project!", values);
+    // TODO -> functionality of button after creating new project (submitting form)
+    const createProject = (data: IProject) => {
+        console.log("Creating project!", data);
     }
 
     const addCategory = (array: FieldArrayRenderProps) => {
@@ -86,9 +87,9 @@ export const CreateProjectForm: FC<IProps> = () => {
                     </div>
                     <div className="scales">
                         Zmenšený rozsah škál: 
-                        <FormControlLabel control={<Checkbox checked={values.toggle} />}
+                        <FormControlLabel control={<Checkbox checked={values.scale} />}
                             label=""
-                            name="toggle"
+                            name="scale"
                             onChange={handleChange}
                             className="check"
                         />
