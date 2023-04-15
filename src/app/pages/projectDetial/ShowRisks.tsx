@@ -6,6 +6,7 @@ interface IProps {
 }
 
 // TODO -> if Project role == MANAGER then he should be able to change status of the risk -> need to be done (add button to change status maybe next to risk name)
+// TODO -> if project role == EMPLOYEE there should be button for adding new risk which will navigate user to /createrisk page
 // TODO -> this is just layout for one risk -> there should be .map function that maps over all risks and displays them
 // didnt create types yet
 export const ShowRisks: FC<IProps> = () => {
