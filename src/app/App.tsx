@@ -5,7 +5,7 @@ import { IcoLoader } from "../assets/icons";
 import "./App.css";
 import { NotificationCenter } from "./components/NotificationCenter";
 import { useAuth } from "./context/AuthContext";
-import { Dashboard, Login, MainLayout, ProjectDetail, CreateProject, CreateRisk } from "./pages";
+import { Dashboard, Login, MainLayout, ProjectDetail, CreateProject, CreateRisk, ManageRolesAdmin } from "./pages";
 
 const PrivatePlantRoute: FC = () => {
     const { authenticate, authState } = useAuth();
@@ -22,6 +22,7 @@ const PrivatePlantRoute: FC = () => {
 };
 
 // TODO -> route createproject should be visible only for project manager (admin ?) not for regular customer ... need to be done
+// TODO -> route managerolesadmin should be visible only for admin
 export default function App() {
     return (
         <div className="App">
@@ -34,6 +35,7 @@ export default function App() {
                         <Route path="*" element={<Dashboard />} />
                         <Route path="createproject" element={<CreateProject />} />
                         <Route path="createrisk" element={<CreateRisk />} />
+                        <Route path="managerolesadmin" element={<ManageRolesAdmin />} />
                     </Route>
                 </Routes>
             </Router>

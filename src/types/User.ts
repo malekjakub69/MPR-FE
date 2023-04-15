@@ -7,16 +7,17 @@ export interface IUserFull extends IUser {
     language_id: null;
     last_login: string;
     login: string;
-    role: IRole;
+    role_proj: IRole;
     role_id: RoleCode;
     unread_messages: number;
 }
 
 export interface IUser {
     id: number;
-    first_name: string;
+    name: string;
     surname: string;
     email: string;
+    role: AppRoles
 }
 
 export interface IRole {
@@ -44,4 +45,10 @@ export interface ILoginResponse {
     access_token: string;
     refresh_token: string;
     items: IUserFull[];
+}
+
+export enum AppRoles {
+    ADMIN,
+    PROJECT_MANAGER,
+    USER
 }
