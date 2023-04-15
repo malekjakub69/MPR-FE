@@ -38,6 +38,7 @@ export const CreateRiskForm: FC<IProps> = () => {
         console.log("Creating Risk!", data.impact);
     }
     // TODO -> in probability and impact radio boxes (if project is using reduced scales then other radio buttons must be disabled (TINY, EXTREME must be disabled)) add prop to FormControlLabel disabled={condition}
+    // TODO -> add one more Radio button choices for Risk Category (should be dynamically rendered (cause risk categories are bounded to the project))
     return (
         <Formik onSubmit={createProject} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
             {({ handleSubmit, values, setFieldValue }) => (

@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Checkbox from '@mui/material/Checkbox';
 import { FormControlLabel } from "@mui/material";
-import { IProject } from "../../../types";
+import { ICreateProject } from "../../../types";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -35,7 +35,7 @@ export const CreateProjectForm: FC<IProps> = () => {
 
 
     // TODO -> functionality of button after creating new project (submitting form)
-    const createProject = (data: IProject) => {
+    const createProject = (data: ICreateProject) => {
         console.log("Creating project!", data);
     }
 
