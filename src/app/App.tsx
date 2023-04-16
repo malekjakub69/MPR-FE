@@ -5,7 +5,7 @@ import { IcoLoader } from "../assets/icons";
 import "./App.css";
 import { NotificationCenter } from "./components/NotificationCenter";
 import { useAuth } from "./context/AuthContext";
-import { Dashboard, Login, MainLayout, ProjectDetail, CreateProject, CreateRisk, ManageRolesAdmin } from "./pages";
+import { Dashboard, Login, MainLayout, ProjectDetail, CreateProject, CreateRisk, ManageRolesAdmin, ProjectTeam } from "./pages";
 
 const PrivatePlantRoute: FC = () => {
     const { authenticate, authState } = useAuth();
@@ -36,6 +36,7 @@ export default function App() {
                         <Route path="createproject" element={<CreateProject />} />
                         <Route path="createrisk" element={<CreateRisk />} />
                         <Route path="managerolesadmin" element={<ManageRolesAdmin />} />
+                        <Route path="projectteam" element={<ProjectTeam />} />
                     </Route>
                 </Routes>
             </Router>
