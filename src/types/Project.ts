@@ -1,5 +1,3 @@
-import { IRisk } from "./Risk";
-
 export interface ICreateProject {
     name: string;
     description: string;
@@ -7,4 +5,10 @@ export interface ICreateProject {
     endDate: Date;
     scale: boolean;
     categories: string[];
+}
+
+export interface IProject {
+    pk: number;
+    description: string;
+    name: string;
 }

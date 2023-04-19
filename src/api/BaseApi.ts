@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import config from "../api-config";
-import { BaseApiGetType, BaseApiType } from "../types";
+import { BaseApiType } from "../types";
 
 const BASE_URL = `${config.ApiEndpoint}`;
 
@@ -8,30 +8,37 @@ export function buildUrl(path: string, id?: number) {
     return `${BASE_URL}${path}${id ? "/" + id : ""}`;
 }
 
-export function getBase<T>(path: string): Promise<BaseApiGetType<T>> {
-    return axios.get(buildUrl(path)).then((result) => {
-        return result.data;
+const api = axios.create({
+    withCredentials: true,
+    headers: {
+        "Access-Control-Allow-Credentials": true,
+    },
+});
+
+export function getBase<T>(path: string): Promise<AxiosResponse<T>> {
+    return api.get(buildUrl(path)).then((result) => {
+        return result;
     });
 }
 
 export function deleteBase<T>(path: string): Promise<BaseApiType<T>> {
-    return axios.delete(buildUrl(path)).then((result) => {
+    return api.delete(buildUrl(path)).then((result) => {
         return { items: result.data.items, message: result.data.message };
     });
 }
 
 export function postSingle<T>(path: string, requestData: unknown): Promise<BaseApiType<T>> {
-    return axios.post(buildUrl(path), requestData).then((result) => {
+    return api.post(buildUrl(path), requestData).then((result) => {
         return { items: result.data.items, message: result.data.message };
     });
 }
 
 export function post<T>(path: string, requestData?: unknown): Promise<AxiosResponse<T>> {
-    return axios.post(buildUrl(path), requestData).then((result) => result);
+    return api.post(buildUrl(path), requestData).then((result) => result);
 }
 
 export function put<T>(path: string, requestData: unknown): Promise<BaseApiType<T>> {
-    return axios.put(buildUrl(path), requestData).then((result) => {
+    return api.put(buildUrl(path), requestData).then((result) => {
         return { items: result.data.items, message: result.data.message };
     });
 }

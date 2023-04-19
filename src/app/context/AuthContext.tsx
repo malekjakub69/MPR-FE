@@ -27,12 +27,12 @@ const initAuth: IUseAuth = {
 function useProvideAuth() {
     const [user, setUser] = useState<IUser | null>(null);
     const [loginError, setLoginError] = useState<string | undefined>();
-    //TODO: change to idle after testing
     const [authState, setAuthState] = useState<"idle" | "success" | "fail" | "inProgress">("idle");
 
     const { mutate: authenticate } = useMutation({
         mutationFn: () => {
             setAuthState("inProgress");
+            console.log(document.cookie);
             return AuthApi.authenticate();
         },
         onSuccess: (resp) => {

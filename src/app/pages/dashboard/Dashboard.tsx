@@ -1,24 +1,24 @@
-import { FC, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { FC } from "react";
+import { ProjectApi } from "../../../api";
 import "./Dashboard.css";
-import { DashboardProjects } from "./DashboardProjects";
+import { DashboardProject } from "./DashboardProjects";
 
 interface IProps {
     className?: string;
 }
 
-
 export const Dashboard: FC<IProps> = () => {
-    const [projects, setProjects] = useState([])
-
-    //TODO get projects from backend and store them into projects state and send as props into DashboardProjects component
-    useEffect(() => {
-
-    }, []);
+    const { data: projects, isLoading } = useQuery({
+        queryKey: ["projects"],
+        queryFn: () => ProjectApi.getAll(),
+    });
 
     return (
         <div className="dashboard">
             <h1>Projekty</h1>
-            <DashboardProjects />
+            {projects && !isLoading && projects.map((project) => <DashboardProject project={project} />)}
+            {isLoading && <p>Loading...</p>}
         </div>
-    )
+    );
 };
