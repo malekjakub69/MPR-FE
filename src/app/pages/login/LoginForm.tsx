@@ -53,7 +53,7 @@ export const LoginForm: FC<IProps> = () => {
                     <a href="/" className=" text-slate-300">
                         Zapomenuté heslo
                     </a>
-                    <button className="bg-red-700 py-2 px-4 rounded-md float-right text-white" type="submit">
+                    <button className="bg-red py-2 px-4 rounded-md float-right text-white" type="submit">
                         Login
                     </button>
                 </form>

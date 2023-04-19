@@ -24,7 +24,7 @@ export const CreateProjectInput: FC<IProps> = ({ label, onChange, onChangeRaw, v
                     type={type}
                     id={"greinerInput" + name}
                     className={`w-full border-2 text-sm ${
-                        error ? "border-red-500" : ""
+                        error ? "border-red" : ""
                     }  focus:outline-none disabled:bg-transparent rounded-md p-2 disabled:opacity-100 text-gray-700 disabled:text-gray-600 focus:border-b-[#323e99] `}
                     onChange={(e) => {
                         if (onChange) onChange(e.target.value);

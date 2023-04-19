@@ -23,7 +23,7 @@ export const LoginInput: FC<IProps> = ({ label, onChange, onChangeRaw, value, cl
                     type={type}
                     id={"greinerInput" + name}
                     className={`w-full border-2 text-sm ${
-                        error ? "border-red-500" : ""
+                        error ? "border-red" : ""
                     }  focus:outline-none disabled:bg-transparent rounded-md p-2 disabled:opacity-100 text-gray-700 disabled:text-gray-600 focus:border-b-[#323e99]`}
                     onChange={(e) => {
                         if (onChange) onChange(e.target.value);
@@ -35,7 +35,7 @@ export const LoginInput: FC<IProps> = ({ label, onChange, onChangeRaw, value, cl
                     autoComplete="off"
                     placeholder={placeholder}
                 />
-                {error != "" && <div className="text-red-500 bottom-0 pt-1 absolute translate-y-full">{error}</div>}
+                {error != "" && <div className="text-red bottom-0 pt-1 absolute translate-y-full">{error}</div>}
             </div>
         </div>
     );

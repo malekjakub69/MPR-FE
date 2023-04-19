@@ -1,11 +1,14 @@
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FC, useEffect } from "react";
 import { IcoLoader } from "../assets/icons";
 import "./App.css";
 import { NotificationCenter } from "./components/NotificationCenter";
-import { useAuth } from "./context/AuthContext";
-import { Dashboard, Login, MainLayout, ProjectDetail, CreateProject, CreateRisk, ManageRolesAdmin, ProjectTeam } from "./pages";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { CreateProject, CreateRisk, Dashboard, Login, MainLayout, ManageRolesAdmin, ProjectDetail, ProjectTeam } from "./pages";
+
+const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false } } });
 
 const PrivatePlantRoute: FC = () => {
     const { authenticate, authState } = useAuth();
@@ -26,20 +29,26 @@ const PrivatePlantRoute: FC = () => {
 export default function App() {
     return (
         <div className="App">
-            <NotificationCenter />
-            <Router>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="*" element={<PrivatePlantRoute />}>
-                        <Route path="project/:projectId" element={<ProjectDetail />} />
-                        <Route path="*" element={<Dashboard />} />
-                        <Route path="createproject" element={<CreateProject />} />
-                        <Route path="createrisk" element={<CreateRisk />} />
-                        <Route path="managerolesadmin" element={<ManageRolesAdmin />} />
-                        <Route path="projectteam" element={<ProjectTeam />} />
-                    </Route>
-                </Routes>
-            </Router>
+            <QueryClientProvider client={queryClient}>
+                <AuthProvider>
+                    <>
+                        <NotificationCenter />
+                        <Router>
+                            <Routes>
+                                <Route path="/login" element={<Login />} />
+                                <Route path="*" element={<PrivatePlantRoute />}>
+                                    <Route path="project/:projectId" element={<ProjectDetail />} />
+                                    <Route path="createproject" element={<CreateProject />} />
+                                    <Route path="createrisk" element={<CreateRisk />} />
+                                    <Route path="managerolesadmin" element={<ManageRolesAdmin />} />
+                                    <Route path="projectteam" element={<ProjectTeam />} />
+                                    <Route path="*" element={<Dashboard />} />
+                                </Route>
+                            </Routes>
+                        </Router>
+                    </>
+                </AuthProvider>
+            </QueryClientProvider>
         </div>
     );
 }

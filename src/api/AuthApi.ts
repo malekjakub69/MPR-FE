@@ -1,19 +1,22 @@
-import { AxiosResponse } from "axios";
-import { ILoginResponse, IUserFull, IUserLogin } from "../types";
+import axios from "axios";
+import { IUser, IUserLogin } from "../types";
+import { buildUrl } from "./BaseApi";
 import { BaseApi } from "./index";
 
-export async function authenticate(): Promise<IUserFull[]> {
-    return (await BaseApi.post<IUserFull[]>("/authenticate")).data;
+export async function authenticate(): Promise<Boolean> {
+    return (await BaseApi.post<IUser[]>("/logged")).status === 200;
 }
 
-export function logoutRefreshToken(): Promise<AxiosResponse<ILoginResponse>> {
-    return BaseApi.post<ILoginResponse>("/logout/refresh");
+export async function logout(): Promise<Boolean> {
+    return (await BaseApi.post<IUser[]>("/logged")).status === 200;
 }
 
-export function logoutAccessToken(): Promise<AxiosResponse<ILoginResponse>> {
-    return BaseApi.post<ILoginResponse>("/logout/access");
-}
-
-export async function logIn(login: IUserLogin): Promise<ILoginResponse> {
-    return (await BaseApi.post<ILoginResponse>("/login", login)).data;
+export async function logIn(login: IUserLogin): Promise<IUser[]> {
+    return (
+        await axios.post<any>(buildUrl("/login"), login, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+    ).data;
 }

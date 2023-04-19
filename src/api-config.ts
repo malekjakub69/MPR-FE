@@ -1,10 +1,10 @@
 const Development = {
-    ApiEndpoint: "http://localhost:6000",
+    ApiEndpoint: "http://localhost:8000",
     FrontendHost: "http://localhost",
 };
 
 const Production = {
-    ApiEndpoint: "http://localhost:6000",
+    ApiEndpoint: "http://localhost:8000",
     FrontendHost: "http://localhost",
 };
 

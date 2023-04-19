@@ -4,7 +4,7 @@ import { BaseApiGetType, BaseApiType } from "../types";
 
 const BASE_URL = `${config.ApiEndpoint}`;
 
-function buildUrl(path: string, id?: number) {
+export function buildUrl(path: string, id?: number) {
     return `${BASE_URL}${path}${id ? "/" + id : ""}`;
 }
 

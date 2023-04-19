@@ -1,17 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { createContext, useContext, useState } from "react";
-import toast from "react-hot-toast";
 import { AuthApi } from "../../api";
-import { IUserFull } from "../../types";
+import { IUser } from "../../types";
 
 interface IUseAuth {
-    user: IUserFull | null;
+    user: IUser | null;
     authState: "idle" | "success" | "fail" | "inProgress";
     logIn: (loginCred: { login: string; password: string }) => void;
-    logOut: (action: () => void) => void;
+    logOut: () => void;
     authenticate: () => void;
-    updateUnreadMessages: () => void;
     loginError: string | undefined;
     loginLoading: boolean;
 }
@@ -24,13 +22,12 @@ const initAuth: IUseAuth = {
     logIn: () => {},
     logOut: () => {},
     authenticate: () => {},
-    updateUnreadMessages: () => {},
 };
 
 function useProvideAuth() {
-    const [user, setUser] = useState<IUserFull | null>(null);
+    const [user, setUser] = useState<IUser | null>(null);
     const [loginError, setLoginError] = useState<string | undefined>();
-
+    //TODO: change to idle after testing
     const [authState, setAuthState] = useState<"idle" | "success" | "fail" | "inProgress">("idle");
 
     const { mutate: authenticate } = useMutation({
@@ -39,12 +36,10 @@ function useProvideAuth() {
             return AuthApi.authenticate();
         },
         onSuccess: (resp) => {
-            setUser(resp[0]);
             setAuthState("success");
         },
         onError: (err: AxiosError<{ message: string }>) => {
             setAuthState("fail");
-            toast.error(`Authenticate Error |${err.response?.data.message || ""}`);
         },
     });
 
@@ -54,9 +49,7 @@ function useProvideAuth() {
             return AuthApi.logIn(data);
         },
         onSuccess: (resp) => {
-            localStorage.setItem("access_token", resp.access_token);
-            localStorage.setItem("refresh_token", resp.refresh_token);
-            setUser(resp.items[0]);
+            setUser(resp[0]);
             setAuthState("success");
         },
         onError: (err: AxiosError<{ message: string }>) => {
@@ -65,29 +58,22 @@ function useProvideAuth() {
         },
     });
 
-    const logOut = (action: () => void) => {
-        return AuthApi.logoutRefreshToken()
-            .then(() => {
-                return AuthApi.logoutAccessToken();
-            })
-            .then(() => {
-                setUser(null);
-                setAuthState("success");
-                localStorage.removeItem("access_token");
-                localStorage.removeItem("refresh_token");
-                action();
-                return null;
-            });
-    };
+    const { mutate: logOut } = useMutation({
+        mutationFn: () => {
+            setAuthState("inProgress");
+            return AuthApi.logout();
+        },
+        onSuccess: () => {
+            setAuthState("success");
+            setUser(null);
+        },
+        onError: (err: AxiosError<{ message: string }>) => {
+            setAuthState("success");
+            setLoginError(err.response?.data.message);
+        },
+    });
 
-    const updateUnreadMessages = () => {
-        setUser((tmpUser) => {
-            if (tmpUser) return { ...tmpUser, unread_messages: 0 };
-            else return null;
-        });
-    };
-
-    return { user, authState, logIn, loginError, loginLoading, logOut, authenticate, updateUnreadMessages };
+    return { user, authState, logIn, loginError, loginLoading, logOut, authenticate };
 }
 
 export const AuthContext: React.Context<IUseAuth> = createContext<IUseAuth>(initAuth);
