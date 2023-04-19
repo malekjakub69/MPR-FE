@@ -12,8 +12,11 @@ export async function logout(): Promise<Boolean> {
 }
 
 export async function logIn(login: IUserLogin): Promise<IUser[]> {
+    var bodyFormData = new FormData();
+    bodyFormData.append("email", login.login);
+    bodyFormData.append("password", login.password);
     return (
-        await axios.post<any>(buildUrl("/login"), login, {
+        await axios.post<any>(buildUrl("/login"), bodyFormData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
