@@ -3,7 +3,7 @@ export enum ERiskCats {
     LOW,
     MEDIUM,
     HIGH,
-    EXTREME
+    EXTREME,
 }
 
 export enum ERiskStatus {
@@ -11,16 +11,31 @@ export enum ERiskStatus {
     ACTIVE,
     CLOSED,
     DELETED,
-    TRANSPIRED
+    TRANSPIRED,
 }
 
 export interface IRisk {
-    name: string,
-    description: string,
-    danger: string,
-    trigger: string,
-    reaction: string,
-    status: ERiskStatus,
-    impact: ERiskCats,
-    probability: ERiskCats
+    pk: number;
+    fields: {
+        name: string;
+        description: string;
+        danger: string;
+        trigger: string;
+        reaction: string;
+        status: ERiskStatus;
+        impact: ERiskCats;
+        probability: ERiskCats;
+    };
+    model?: string;
+}
+
+export interface IRiskCreate {
+    name: string;
+    description: string;
+    danger: string;
+    trigger: string;
+    reaction: string;
+    status: ERiskStatus;
+    impact: ERiskCats;
+    probability: ERiskCats;
 }

@@ -32,10 +32,10 @@ function useProvideAuth() {
     const { mutate: authenticate } = useMutation({
         mutationFn: () => {
             setAuthState("inProgress");
-            console.log(document.cookie);
             return AuthApi.authenticate();
         },
         onSuccess: (resp) => {
+            setUser(resp[0]);
             setAuthState("success");
         },
         onError: (err: AxiosError<{ message: string }>) => {
@@ -64,11 +64,11 @@ function useProvideAuth() {
             return AuthApi.logout();
         },
         onSuccess: () => {
-            setAuthState("success");
+            setAuthState("fail");
             setUser(null);
         },
         onError: (err: AxiosError<{ message: string }>) => {
-            setAuthState("success");
+            setAuthState("fail");
             setLoginError(err.response?.data.message);
         },
     });

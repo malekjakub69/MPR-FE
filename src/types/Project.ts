@@ -9,6 +9,14 @@ export interface ICreateProject {
 
 export interface IProject {
     pk: number;
-    description: string;
-    name: string;
+    fields: {
+        date_begin: string;
+        date_end: string;
+        description: string;
+        name: string;
+        owner_id: number;
+        status: string;
+    };
+    model?: string;
 }
+

@@ -11,7 +11,7 @@ export function buildUrl(path: string, id?: number) {
 const api = axios.create({
     withCredentials: true,
     headers: {
-        "Access-Control-Allow-Credentials": true,
+        "Access-Control-Allow-Credentials": "true",
     },
 });
 

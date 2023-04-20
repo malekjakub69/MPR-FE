@@ -1,17 +1,16 @@
-import { Formik, Field } from "formik";
-import { FC, useState  } from "react";
+import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { Formik } from "formik";
+import { FC } from "react";
 import { object, string } from "yup";
+import { ERiskCats, ERiskStatus, IRiskCreate } from "../../../types";
 import { CreateProjectInputFormik } from "../../components/CreateProjectInput";
 import "./CreateRisk.css";
-import { RadioGroup, Radio, FormControlLabel } from '@mui/material';
-import { ERiskCats, ERiskStatus, IRisk } from "../../../types";
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 interface IProps {
     className?: string;
 }
-
 
 export const CreateRiskForm: FC<IProps> = () => {
     const initialValues = {
@@ -22,7 +21,7 @@ export const CreateRiskForm: FC<IProps> = () => {
         reaction: "",
         status: ERiskStatus.CONCEPT,
         impact: ERiskCats.LOW,
-        probability: ERiskCats.LOW
+        probability: ERiskCats.LOW,
     };
 
     const loginFormValidationSchema = object().shape({
@@ -34,9 +33,9 @@ export const CreateRiskForm: FC<IProps> = () => {
     });
 
     // TODO -> functionality of button after creating new risk (submitting form)
-    const createProject = (data: IRisk) => {
+    const createProject = (data: IRiskCreate) => {
         console.log("Creating Risk!", data.impact);
-    }
+    };
     // TODO -> in probability and impact radio boxes (if project is using reduced scales then other radio buttons must be disabled (TINY, EXTREME must be disabled)) add prop to FormControlLabel disabled={condition}
     // TODO -> add one more Radio button choices for Risk Category (should be dynamically rendered (cause risk categories are bounded to the project))
     return (
@@ -86,10 +85,12 @@ export const CreateRiskForm: FC<IProps> = () => {
                     <p>Pravdepodobnost rizika</p>
                     <RadioGroup
                         row
-                        className='radio'
+                        className="radio"
                         value={values.probability}
                         name="probability"
-                        onChange={(val) => {setFieldValue("probability", val.target.value)}}    
+                        onChange={(val) => {
+                            setFieldValue("probability", val.target.value);
+                        }}
                     >
                         <FormControlLabel value={ERiskCats.TINY} control={<Radio />} label="Nepatrná" />
                         <FormControlLabel value={ERiskCats.LOW} control={<Radio />} label="Malá" />
@@ -100,10 +101,12 @@ export const CreateRiskForm: FC<IProps> = () => {
                     <p>Dopad rizika</p>
                     <RadioGroup
                         row
-                        className='radio'
+                        className="radio"
                         value={values.impact}
                         name="impact"
-                        onChange={(val) => {setFieldValue("impact", val.target.value)}}    
+                        onChange={(val) => {
+                            setFieldValue("impact", val.target.value);
+                        }}
                     >
                         <FormControlLabel value={ERiskCats.TINY} control={<Radio />} label="Nepatrný" />
                         <FormControlLabel value={ERiskCats.LOW} control={<Radio />} label="Malý" />
@@ -114,16 +117,16 @@ export const CreateRiskForm: FC<IProps> = () => {
                     <p>Stav rizika</p>
                     <RadioGroup
                         row
-                        className='radio'
+                        className="radio"
                         value={values.status}
                         name="status"
-                        onChange={(val) => {setFieldValue("status", val.target.value)}}  
+                        onChange={(val) => {
+                            setFieldValue("status", val.target.value);
+                        }}
                     >
                         <FormControlLabel value={ERiskStatus.CONCEPT} control={<Radio />} label="Koncept" />
                     </RadioGroup>
-                    <button type="submit">
-                        Vytvořit riziko
-                    </button>
+                    <button type="submit">Vytvořit riziko</button>
                 </form>
             )}
         </Formik>

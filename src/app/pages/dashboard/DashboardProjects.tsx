@@ -14,8 +14,8 @@ export const DashboardProject: FC<IProps> = ({ project }) => {
     return (
         <div className="project">
             <div className="columnInfo">
-                <h1>{project.name}</h1>
-                <p>{project.description}</p>
+                <h1>{project.fields.name}</h1>
+                <p>{project.fields.description}</p>
             </div>
             <div className="columnStats">
                 <button onClick={() => navigate("/project/" + project.pk)}>Do projektu</button>
