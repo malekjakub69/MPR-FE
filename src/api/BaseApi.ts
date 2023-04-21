@@ -15,7 +15,7 @@ const api = axios.create({
     },
 });
 
-export function getBase<T>(path: string): Promise<AxiosResponse<T>> {
+export function get<T>(path: string): Promise<AxiosResponse<T>> {
     return api.get(buildUrl(path)).then((result) => {
         return result;
     });
@@ -27,18 +27,6 @@ export function deleteBase<T>(path: string): Promise<BaseApiType<T>> {
     });
 }
 
-export function postSingle<T>(path: string, requestData: unknown): Promise<BaseApiType<T>> {
-    return api.post(buildUrl(path), requestData).then((result) => {
-        return { items: result.data.items, message: result.data.message };
-    });
-}
-
 export function post<T>(path: string, requestData?: unknown): Promise<AxiosResponse<T>> {
     return api.post(buildUrl(path), requestData).then((result) => result);
-}
-
-export function put<T>(path: string, requestData: unknown): Promise<BaseApiType<T>> {
-    return api.put(buildUrl(path), requestData).then((result) => {
-        return { items: result.data.items, message: result.data.message };
-    });
 }

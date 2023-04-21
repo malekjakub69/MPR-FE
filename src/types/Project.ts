@@ -4,7 +4,6 @@ export interface ICreateProject {
     startDate: Date;
     endDate: Date;
     scale: boolean;
-    categories: string[];
 }
 
 export interface IProject {
@@ -19,4 +18,3 @@ export interface IProject {
     };
     model?: string;
 }
-

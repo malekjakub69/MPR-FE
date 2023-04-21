@@ -30,8 +30,16 @@ export const NavMenu: FC<IProps> = (className) => {
 
     return (
         <div className={`flex flex-col items-stretch nav-menu-grad overflow-auto relative ${className || ""}`}>
-            <div className={`bg-mine-shaft h-32 w-full flex justify-center align-center shrink-0 sticky top-0 z-10`}>
+            <div className={`bg-mine-shaft h-32 w-full flex justify-center align-center shrink-0 sticky top-0`}>
                 <img onClick={() => navigate("/")} src={logo} className={"w-4/6 object-contain cursor-pointer"} alt={"logo"} />
+            </div>
+            <div className="bg-mine-shaft-400 p-2">
+                <button onClick={() => navigate("/")} className="border-2 bg-white w-full h-10 rounded-lg my-1">
+                    Home
+                </button>
+                <button onClick={() => navigate("/createproject")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
+                    Create new Project
+                </button>
             </div>
             <div className="bg-mine-shaft-400 h-full text-white p-4">
                 My projects

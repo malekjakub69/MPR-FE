@@ -3,7 +3,7 @@ import { FC } from "react";
 import { Navigate } from "react-router-dom";
 import { object, string } from "yup";
 import { IUserLogin } from "../../../types";
-import { LoginInputFormik } from "../../components/LoginInput";
+import { RiskInputFormik } from "../../components/RiskInput";
 import { useAuth } from "../../context/AuthContext";
 import "./Login.css";
 
@@ -34,7 +34,7 @@ export const LoginForm: FC<IProps> = () => {
             {({ handleSubmit }) => (
                 <form onSubmit={handleSubmit}>
                     <h2 className="text-2xl text-white font-semibold">Přihlášení</h2>
-                    <LoginInputFormik
+                    <RiskInputFormik
                         className="my-6 text-white w-64"
                         label="Vaše e-mailová adresa"
                         name={"login"}
@@ -42,7 +42,7 @@ export const LoginForm: FC<IProps> = () => {
                         placeholder={"Email"}
                         required
                     />
-                    <LoginInputFormik
+                    <RiskInputFormik
                         className="my-6 text-white w-64"
                         label="Vaše heslo"
                         name={"password"}

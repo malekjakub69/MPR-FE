@@ -29,7 +29,7 @@ export interface IRisk {
     model?: string;
 }
 
-export interface IRiskCreate {
+export interface ICreateRisk {
     name: string;
     description: string;
     danger: string;

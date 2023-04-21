@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { FC } from "react";
+import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
 import { IRisk } from "../../../types";
@@ -19,6 +20,9 @@ export const ShowRisks: FC<IProps> = () => {
     const { data, isLoading } = useQuery({
         queryKey: ["project_risk", projectId],
         queryFn: () => (projectId ? ProjectApi.getProjectRisk(projectId) : []),
+        onError: () => {
+            toast.error("Something went wrong while loading project risks");
+        },
     });
 
     if (isLoading) {

@@ -39,7 +39,7 @@ export default function App() {
                                 <Route path="*" element={<PrivatePlantRoute />}>
                                     <Route path="project/:projectId" element={<ProjectDetail />} />
                                     <Route path="createproject" element={<CreateProject />} />
-                                    <Route path="createrisk" element={<CreateRisk />} />
+                                    <Route path="project/:projectId/createrisk" element={<CreateRisk />} />
                                     <Route path="managerolesadmin" element={<ManageRolesAdmin />} />
                                     <Route path="projectteam" element={<ProjectTeam />} />
                                     <Route path="*" element={<Dashboard />} />

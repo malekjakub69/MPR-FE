@@ -14,7 +14,7 @@ interface IProps {
     placeholder?: string;
 }
 
-export const LoginInput: FC<IProps> = ({ label, onChange, onChangeRaw, value, className, disabled, type = "text", name, error = "", placeholder }) => {
+export const RiskInput: FC<IProps> = ({ label, onChange, onChangeRaw, value, className, disabled, type = "text", name, error = "", placeholder }) => {
     return (
         <div className={`${className}`}>
             <div>{label}</div>
@@ -41,13 +41,13 @@ export const LoginInput: FC<IProps> = ({ label, onChange, onChangeRaw, value, cl
     );
 };
 
-export const LoginInputFormik: FC<FieldAttributes<unknown> & { label?: string; required?: boolean }> = (props) => {
+export const RiskInputFormik: FC<FieldAttributes<unknown> & { label?: string; required?: boolean }> = (props) => {
     const [field, meta] = useField(props);
 
     const errorMessage = meta.error && meta.touched ? meta.error : "";
 
     return (
-        <LoginInput
+        <RiskInput
             placeholder={props.placeholder}
             name={field.name}
             value={field.value as string}

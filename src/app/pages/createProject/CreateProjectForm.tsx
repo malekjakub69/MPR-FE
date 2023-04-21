@@ -1,133 +1,110 @@
-import { Field, Formik, FieldArray, FieldArrayRenderProps } from "formik";
-import { FC, useState  } from "react";
-import { array, boolean, object, string } from "yup";
-import { CreateProjectInputFormik } from "../../components/CreateProjectInput";
-import "./CreateProject.css";
+import { FormControlLabel } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
+import { useMutation } from "@tanstack/react-query";
+import { Formik } from "formik";
+import { FC } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Checkbox from '@mui/material/Checkbox';
-import { FormControlLabel } from "@mui/material";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { object, string } from "yup";
+import { ProjectApi } from "../../../api";
 import { ICreateProject } from "../../../types";
+import { RiskInputFormik } from "../../components/RiskInput";
+import "./CreateProject.css";
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 interface IProps {
     className?: string;
 }
 
-
 export const CreateProjectForm: FC<IProps> = () => {
-    const [category, setCategory] = useState("")
+    const navigate = useNavigate();
+
+    const { mutate: createProject } = useMutation({
+        mutationFn: (data: ICreateProject) => {
+            return ProjectApi.createProject(data);
+        },
+        onSuccess: (resp) => {
+            toast.success("Risk created");
+            navigate("/");
+        },
+        onError: () => {
+            toast.error("Creating project failed");
+        },
+    });
+
     const initialValues = {
         name: "",
         description: "",
         scale: false,
         startDate: new Date(),
-        endDate: new Date(Date.now() + ( 3600 * 1000 * 24)),
-        categories: [],
+        endDate: new Date(Date.now() + 3600 * 1000 * 24),
     };
 
     const loginFormValidationSchema = object().shape({
         name: string().required("Toto pole je povinné"),
         description: string().required("Toto pole je povinné"),
-        categories: array().min(1, 'Minimálne jedna kategorie je povinná'),
     });
 
-
     // TODO -> functionality of button after creating new project (submitting form)
-    const createProject = (data: ICreateProject) => {
-        console.log("Creating project!", data);
-    }
-
-    const addCategory = (array: FieldArrayRenderProps) => {
-        if(category !== "") {
-            array.push(category)
-            setCategory("")
-        }
-    }
+    const createFormProject = (data: ICreateProject) => {
+        createProject(data);
+    };
 
     return (
-        <Formik onSubmit={createProject} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
-            {({ handleSubmit, handleChange, values, setFieldValue, errors, touched }) => (
-                <form onSubmit={handleSubmit}>
-                    <CreateProjectInputFormik
-                        className="my-6 text-#1d3746 w-100"
-                        label="Název projektu"
-                        name={"name"}
-                        type={"text"}
-                        placeholder={"Názov"}
-                        required
-                    />
-                    <CreateProjectInputFormik
-                        className="my-6 text-#1d3746 w-100"
-                        label="Popis projektu"
-                        name={"description"}
-                        type={"text"}
-                        placeholder={"Popis"}
-                        required
-                    />
-
-                    <div className="row">
-                        <div className="column">
-                            <div>Začátek projektu:</div>
-                            <DatePicker
-                                className="calendar"
-                                selected={values.startDate}
-                                onChange={(val) => {setFieldValue("startDate", val)}}
-                            />
-                        </div>
-                        <div className="column">
-                            <div>Konec projektu:</div>
-                            <DatePicker
-                                className="calendar"
-                                selected={values.endDate}
-                                onChange={(val) => {setFieldValue("endDate", val)}}
-                            />
-                        </div>
-                    </div>
-                    <div className="scales">
-                        Zmenšený rozsah škál: 
-                        <FormControlLabel control={<Checkbox checked={values.scale} />}
-                            label=""
-                            name="scale"
-                            onChange={handleChange}
-                            className="check"
+        <>
+            <Formik onSubmit={createFormProject} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
+                {({ handleSubmit, handleChange, values, setFieldValue, errors, touched }) => (
+                    <form onSubmit={handleSubmit}>
+                        <RiskInputFormik
+                            className="my-6 text-#1d3746 w-100"
+                            label="Název projektu"
+                            name={"name"}
+                            type={"text"}
+                            placeholder={"Názov"}
+                            required
                         />
-                    </div>
-                    <FieldArray 
-                        name="categories"
-                        render={arrayHelpers => (
-                            <div>
-                                <div className="risks">
-                                    Kategorie rizík:
-                                    <br />
-                                    {
-                                        values.categories.map((category, index) => {
-                                            return(
-                                                <div className="risk" key={index}>
-                                                    {category}
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </div>
-                                <div className="categoryInput">
-                                    <input className="border-2 text-sm focus:outline-none disabled:bg-transparent rounded-md p-2 disabled:opacity-100 text-gray-700 disabled:text-gray-600 focus:border-b-[#323e99]"
-                                    placeholder="Kategorie" value={category} onChange={(e) => {setCategory(e.target.value)}}>
-                                    </input>
-                                    <button type="button" onClick={() => addCategory(arrayHelpers)}>
-                                        Přidat kategorii
-                                    </button>
-                                </div>
-                                {errors.categories && touched.categories ? <div className="errorMessage">{errors.categories}</div> : null}
+                        <RiskInputFormik
+                            className="my-6 text-#1d3746 w-100"
+                            label="Popis projektu"
+                            name={"description"}
+                            type={"text"}
+                            placeholder={"Popis"}
+                            required
+                        />
+
+                        <div className="row">
+                            <div className="column">
+                                <div>Začátek projektu:</div>
+                                <DatePicker
+                                    className="calendar"
+                                    selected={values.startDate}
+                                    onChange={(val) => {
+                                        setFieldValue("startDate", val);
+                                    }}
+                                />
                             </div>
-                        )}
-                    />
-                    <button type="submit">
-                        Vytvořit projekt
-                    </button>
-                </form>
-            )}
-        </Formik>
+                            <div className="column">
+                                <div>Konec projektu:</div>
+                                <DatePicker
+                                    className="calendar"
+                                    selected={values.endDate}
+                                    onChange={(val) => {
+                                        setFieldValue("endDate", val);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="scales">
+                            Zmenšený rozsah škál:
+                            <FormControlLabel control={<Checkbox checked={values.scale} />} label="" name="scale" onChange={handleChange} className="check" />
+                        </div>
+                        <button type="submit">Vytvořit projekt</button>
+                    </form>
+                )}
+            </Formik>
+        </>
     );
 };

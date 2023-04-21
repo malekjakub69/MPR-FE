@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { FC } from "react";
-import { useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
 import { IProject } from "../../../types";
 import "./ProjectDetail.css";
@@ -16,10 +17,14 @@ interface IProps {
 // TODO -> if app role == project manager then there has to be button for adding people into project (maybe somewhere near the Project name) (navigate to /projectteam)
 export const ProjectDetail: FC<IProps> = () => {
     let { projectId } = useParams();
+    const navigate = useNavigate();
 
     const { data: project, isLoading } = useQuery({
         queryKey: ["project", projectId],
         queryFn: () => (projectId ? ProjectApi.getOne(projectId) : ({} as IProject)),
+        onError: () => {
+            toast.error("Something went wrong while loading project");
+        },
     });
 
     return (
@@ -29,6 +34,11 @@ export const ProjectDetail: FC<IProps> = () => {
                 <>
                     <h1>{project?.fields?.name}</h1>
                     <ShowRisks />
+                    <div className="flex mt-4">
+                        <button onClick={() => navigate("createrisk")} className="basis-full bg-mine-shaft-50 text-white text-xl my-2 mx-10 rounded-lg h-14">
+                            Create new risk
+                        </button>
+                    </div>
                 </>
             )}
         </div>

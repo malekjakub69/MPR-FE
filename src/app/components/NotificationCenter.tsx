@@ -25,11 +25,11 @@ export const NotificationCenter: FC = () => {
                                 <div className="grow-0 flex justify-center items-center px-6">
                                     <div
                                         className={`h-10 w-10 rounded-full border-2 ${
-                                            tst.type === "success" ? "border-green" : "border-error"
+                                            tst.type === "success" ? "border-green" : "border-red"
                                         } flex justify-center items-center`}
                                     >
                                         {tst.type === "success" && <IcoCheck className="fill-green w-2/3" />}
-                                        {tst.type === "error" && <IcoExclamation className="fill-error h-2/3" />}
+                                        {tst.type === "error" && <IcoExclamation className="fill-red h-2/3" />}
                                     </div>
                                 </div>
 
