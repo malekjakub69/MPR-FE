@@ -35,19 +35,19 @@ export const NavMenu: FC<IProps> = (className) => {
             </div>
             <div className="bg-mine-shaft-400 p-2">
                 <button onClick={() => navigate("/")} className="border-2 bg-white w-full h-10 rounded-lg my-1">
-                    Home
+                    Domů
                 </button>
                 <button onClick={() => navigate("/createproject")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
-                    Create new Project
+                    Nový projekt
                 </button>
             </div>
             <div className="bg-mine-shaft-400 h-full text-white p-4">
-                My projects
+                <h2>Moje projekty</h2>
                 {isLoading && <p>Loading...</p>}
                 {!isLoading && (
                     <ul>
                         {projects.map((project) => (
-                            <li>
+                            <li key={project.pk}>
                                 <NavLink to={"/project/" + project.pk}>{project.fields.name}</NavLink>
                             </li>
                         ))}

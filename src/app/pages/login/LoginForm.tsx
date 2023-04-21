@@ -14,8 +14,8 @@ interface IProps {
 export const LoginForm: FC<IProps> = () => {
     const auth = useAuth();
     const initialValues = {
-        login: "admin",
-        password: "admin",
+        login: "admin@mpr.cz",
+        password: "Password1",
     };
 
     const loginFormValidationSchema = object().shape({

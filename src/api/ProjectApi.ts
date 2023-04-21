@@ -15,24 +15,26 @@ export async function getProjectRisk(pk: string): Promise<IRisk[]> {
 
 export async function createProjectRisk(data: ICreateRisk): Promise<IRisk[]> {
     var bodyFormData = new FormData();
-    bodyFormData.append("name", data.name);
+    bodyFormData.append("title", data.title);
     bodyFormData.append("description", data.description);
-    bodyFormData.append("danger", data.name);
-    bodyFormData.append("trigger", data.description);
-    bodyFormData.append("reaction", data.name);
-    bodyFormData.append("status", data.description);
-    bodyFormData.append("impact", data.description);
-    bodyFormData.append("probability", data.description);
-    bodyFormData.append("project_id", data.description);
-    return (await BaseApi.post<IRisk[]>(`/create_risk/`, data)).data;
+    bodyFormData.append("danger", data.danger);
+    bodyFormData.append("trigger", data.trigger);
+    bodyFormData.append("reaction", data.reaction);
+    bodyFormData.append("status", data.status.toString());
+    bodyFormData.append("impact", data.impact.toString());
+    bodyFormData.append("probability", data.probability.toString());
+    bodyFormData.append("project", data.project_pk);
+    bodyFormData.append("category", data.category);
+    return (await BaseApi.post<IRisk[]>(`/create_risk`, bodyFormData)).data;
 }
 
 export async function createProject(data: ICreateProject): Promise<IProject[]> {
     var bodyFormData = new FormData();
     bodyFormData.append("name", data.name);
     bodyFormData.append("description", data.description);
-    bodyFormData.append("startDate", data.startDate.toISOString());
-    bodyFormData.append("endDate", data.endDate.toISOString());
-    bodyFormData.append("scale", data.scale.toString());
-    return (await BaseApi.post<IProject[]>(`/create_project/`, data)).data;
+    bodyFormData.append("date_begin", data.startDate.toISOString().substring(0, 10));
+    bodyFormData.append("date_end", data.endDate.toISOString().substring(0, 10));
+    bodyFormData.append("scale_risk", data.scale ? "True" : "False");
+    bodyFormData.append("status", "CONCEPT");
+    return (await BaseApi.post<IProject[]>(`/create_project`, bodyFormData)).data;
 }

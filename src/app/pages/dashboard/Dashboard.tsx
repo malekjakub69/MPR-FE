@@ -17,7 +17,7 @@ export const Dashboard: FC<IProps> = () => {
     return (
         <div className="dashboard">
             <h1>Projekty</h1>
-            {projects && !isLoading && projects.map((project) => <DashboardProject project={project} />)}
+            {projects && !isLoading && projects.map((project) => <DashboardProject key={project.pk} project={project} />)}
             {isLoading && <p>Loading...</p>}
         </div>
     );

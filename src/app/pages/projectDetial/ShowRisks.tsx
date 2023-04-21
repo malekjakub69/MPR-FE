@@ -31,46 +31,41 @@ export const ShowRisks: FC<IProps> = () => {
 
     const generateRisk = (risk: IRisk) => {
         return (
-            <div className="project-detail-risk">
+            <div key={risk.pk} className="project-detail-risk">
                 <h1>{risk.fields.name}</h1>
                 <div className="project-detail-risk-row">
                     <div className="project-detail-risk-column">
                         <h3>Vytvoril</h3>
-                        <p>Peter Parker</p>
+                        <p> {risk.fields.name}</p>
                     </div>
                     <div className="project-detail-risk-column">
                         <h3>Pravdepodobnost</h3>
-                        <p>Malá</p>
+                        <p> {risk.fields.probability}</p>
                     </div>
                     <hr />
                     <div className="project-detail-risk-column">
                         <h3>Dopad</h3>
-                        <p>Kritický</p>
+                        <p>{risk.fields.impact}</p>
                     </div>
                     <div className="project-detail-risk-column">
                         <h3>Status</h3>
-                        <p>Koncept</p>
+                        <p>{risk.fields.status}</p>
                     </div>
                 </div>
                 <p>
-                    <b>Popis:</b> Praesent dapibus. Etiam ligula pede, sagittis quis, interdum ultricies, scelerisque eu. Sed vel lectus. Donec odio tempus
-                    molestie, porttitor ut, iaculis quis, sem. Morbi imperdiet, mauris ac auctor dictum, nisl ligula egestas nulla, et sollicitudin sem purus in
-                    lacus. Proin mattis lacinia justo. Aenean placerat.
+                    <b>Popis:</b> {risk.fields.description}
                 </p>
                 <hr />
                 <p>
-                    <b>Nebezpečenstvo:</b> Praesent dapibus. Etiam ligula pede, sagittis quis, interdum ultricies, scelerisque eu. Sed vel lectus. Donec odio
-                    tempus molestie, porttitor ut, iaculis quis, sem.
+                    <b>Nebezpečenstvo:</b> {risk.fields.danger}
                 </p>
                 <hr />
                 <p>
-                    <b>Spúštač:</b> Praesent dapibus. Etiam ligula pede, sagittis quis, interdum ultricies, scelerisque eu. Sed vel lectus. Donec odio tempus
-                    molestie, porttitor ut, iaculis quis, sem.
+                    <b>Spúštač:</b> {risk.fields.trigger}
                 </p>
                 <hr />
                 <p>
-                    <b>Reakcia:</b> Praesent dapibus. Etiam ligula pede, sagittis quis, interdum ultricies, scelerisque eu. Sed vel lectus. Donec odio tempus
-                    molestie, porttitor ut, iaculis quis, sem.
+                    <b>Reakcia:</b> {risk.fields.reaction}
                 </p>
             </div>
         );

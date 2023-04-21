@@ -5,8 +5,8 @@ import { FC, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { object, string } from "yup";
-import { CategoryApi } from "../../../api";
-import { ERiskCats, ERiskStatus, ICreateCategory, ICreateRisk, IProject } from "../../../types";
+import { CategoryApi, ProjectApi } from "../../../api";
+import { ERiskCats, ERiskStatus, ICreateRisk, IProject } from "../../../types";
 import { CreateCategory } from "../../components/CreateCategory";
 import { RiskInputFormik } from "../../components/RiskInput";
 import "./CreateRisk.css";
@@ -29,7 +29,7 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
     });
 
     const initialValues = {
-        name: "",
+        title: "",
         description: "",
         danger: "",
         trigger: "",
@@ -37,23 +37,23 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
         status: ERiskStatus.CONCEPT,
         impact: ERiskCats.LOW,
         probability: ERiskCats.LOW,
-        categories: "",
+        category: "",
+        project_pk: project.pk.toString(),
     };
 
     const loginFormValidationSchema = object().shape({
-        name: string().required("Toto pole je povinné"),
+        title: string().required("Toto pole je povinné"),
         description: string().required("Toto pole je povinné"),
         danger: string().required("Toto pole je povinné"),
         trigger: string().required("Toto pole je povinné"),
         reaction: string().required("Toto pole je povinné"),
-        categories: string().required("Toto pole je povinné"),
     });
 
     const { mutate: createRisk } = useMutation({
-        mutationFn: (data: ICreateCategory) => {
-            return CategoryApi.create(data);
+        mutationFn: (data: ICreateRisk) => {
+            return ProjectApi.createProjectRisk(data);
         },
-        onSuccess: (resp) => {
+        onSuccess: () => {
             toast.success("Risk created");
             navigate("/project/" + project.pk);
         },
@@ -64,7 +64,9 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
 
     // TODO -> functionality of button after creating new risk (submitting form)
     const createRiskForm = (data: ICreateRisk) => {
+        data.project_pk = project.pk.toString();
         createRisk(data);
+        console.log(data);
     };
     // TODO -> in probability and impact radio boxes (if project is using reduced scales then other radio buttons must be disabled (TINY, EXTREME must be disabled)) add prop to FormControlLabel disabled={condition}
     // TODO -> add one more Radio button choices for Risk Category (should be dynamically rendered (cause risk categories are bounded to the project))
@@ -73,7 +75,7 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
             <Formik onSubmit={createRiskForm} validationSchema={loginFormValidationSchema} initialValues={initialValues}>
                 {({ handleSubmit, values, setFieldValue }) => (
                     <form onSubmit={handleSubmit}>
-                        <RiskInputFormik className="my-6 text-#1d3746 w-100" label="Název rizika" name={"name"} type={"text"} placeholder={"Názov"} required />
+                        <RiskInputFormik className="my-6 text-#1d3746 w-100" label="Název rizika" name={"title"} type={"text"} placeholder={"Názov"} required />
                         <RiskInputFormik
                             className="my-6 text-#1d3746 w-100"
                             label="Popis rizika"
@@ -143,8 +145,19 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
                             <div className="flex gap-4">
                                 {categoriesLoading && <p>Loading...</p>}
                                 {!categoriesLoading && (
-                                    <select className="basis-2/3 border-2 rounded-md text-gray-700" name={"categories"}>
-                                        {categories && categories.map((category) => <option value={category.pk}>{category.fields.name}</option>)}
+                                    <select
+                                        className="basis-2/3 border-2 rounded-md text-gray-700"
+                                        name={"category"}
+                                        onChange={(event) => {
+                                            setFieldValue("category", event.target.value);
+                                        }}
+                                    >
+                                        {categories &&
+                                            categories.map((category) => (
+                                                <option key={category.pk} value={category.pk}>
+                                                    {category.fields.name}
+                                                </option>
+                                            ))}
                                     </select>
                                 )}
                                 <button className="basis-1/3" type="button" onClick={() => setShowCategoryForm(true)}>

@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { createContext, useContext, useState } from "react";
+import { toast } from "react-hot-toast";
 import { AuthApi } from "../../api";
 import { IUser } from "../../types";
 
@@ -55,6 +56,7 @@ function useProvideAuth() {
         onError: (err: AxiosError<{ message: string }>) => {
             setAuthState("fail");
             setLoginError(err.response?.data.message);
+            toast.error("Login error");
         },
     });
 

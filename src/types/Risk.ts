@@ -30,7 +30,7 @@ export interface IRisk {
 }
 
 export interface ICreateRisk {
-    name: string;
+    title: string;
     description: string;
     danger: string;
     trigger: string;
@@ -38,4 +38,6 @@ export interface ICreateRisk {
     status: ERiskStatus;
     impact: ERiskCats;
     probability: ERiskCats;
+    project_pk: string;
+    category: string;
 }

@@ -13,8 +13,6 @@ import { ICreateProject } from "../../../types";
 import { RiskInputFormik } from "../../components/RiskInput";
 import "./CreateProject.css";
 
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
-
 interface IProps {
     className?: string;
 }
@@ -26,8 +24,8 @@ export const CreateProjectForm: FC<IProps> = () => {
         mutationFn: (data: ICreateProject) => {
             return ProjectApi.createProject(data);
         },
-        onSuccess: (resp) => {
-            toast.success("Risk created");
+        onSuccess: () => {
+            toast.success("Project created");
             navigate("/");
         },
         onError: () => {
