@@ -25,11 +25,11 @@ export const CreateProjectForm: FC<IProps> = () => {
             return ProjectApi.createProject(data);
         },
         onSuccess: () => {
-            toast.success("Project created");
+            toast.success("Projekt byl úspěšně vytvořen.");
             navigate("/");
         },
         onError: () => {
-            toast.error("Creating project failed");
+            toast.error("Vytváření projektu selhalo.");
         },
     });
 

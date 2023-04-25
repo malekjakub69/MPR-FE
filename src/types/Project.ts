@@ -15,6 +15,7 @@ export interface IProject {
         name: string;
         owner_id: number;
         status: string;
+        scale_risk: boolean;
     };
     model?: string;
 }

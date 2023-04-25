@@ -39,5 +39,5 @@ export interface ICreateRisk {
     impact: ERiskCats;
     probability: ERiskCats;
     project_pk: string;
-    category: string;
+    category: number;
 }

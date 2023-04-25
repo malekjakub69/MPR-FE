@@ -19,12 +19,15 @@ export async function createProjectRisk(data: ICreateRisk): Promise<IRisk[]> {
     bodyFormData.append("description", data.description);
     bodyFormData.append("danger", data.danger);
     bodyFormData.append("trigger", data.trigger);
-    bodyFormData.append("reaction", data.reaction);
+    bodyFormData.append("reactions", data.reaction);
     bodyFormData.append("status", data.status.toString());
     bodyFormData.append("impact", data.impact.toString());
     bodyFormData.append("probability", data.probability.toString());
     bodyFormData.append("project", data.project_pk);
-    bodyFormData.append("category", data.category);
+    bodyFormData.append("category", data.category.toString());
+    bodyFormData.append("date_identified", new Date().toISOString().substring(0, 10));
+    bodyFormData.append("date_reaction", new Date().toISOString().substring(0, 10));
+    bodyFormData.append("date_updated", new Date().toISOString().substring(0, 10));
     return (await BaseApi.post<IRisk[]>(`/create_risk`, bodyFormData)).data;
 }
 

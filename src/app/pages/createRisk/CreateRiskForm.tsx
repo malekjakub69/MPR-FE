@@ -11,8 +11,6 @@ import { CreateCategory } from "../../components/CreateCategory";
 import { RiskInputFormik } from "../../components/RiskInput";
 import "./CreateRisk.css";
 
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
-
 interface IProps {
     className?: string;
     project: IProject;
@@ -37,7 +35,7 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
         status: ERiskStatus.CONCEPT,
         impact: ERiskCats.LOW,
         probability: ERiskCats.LOW,
-        category: "",
+        category: -1,
         project_pk: project.pk.toString(),
     };
 
@@ -54,19 +52,22 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
             return ProjectApi.createProjectRisk(data);
         },
         onSuccess: () => {
-            toast.success("Risk created");
+            toast.success("Riziko bylo úspěšně vytvořeno.");
             navigate("/project/" + project.pk);
         },
         onError: () => {
-            toast.error("Creating category failed");
+            toast.error("Vytváření rizika selhalo.");
         },
     });
 
     // TODO -> functionality of button after creating new risk (submitting form)
     const createRiskForm = (data: ICreateRisk) => {
         data.project_pk = project.pk.toString();
+        if (data.category === -1) {
+            toast.error("Chybí zvolená kategorie.");
+            return;
+        }
         createRisk(data);
-        console.log(data);
     };
     // TODO -> in probability and impact radio boxes (if project is using reduced scales then other radio buttons must be disabled (TINY, EXTREME must be disabled)) add prop to FormControlLabel disabled={condition}
     // TODO -> add one more Radio button choices for Risk Category (should be dynamically rendered (cause risk categories are bounded to the project))
@@ -146,12 +147,16 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
                                 {categoriesLoading && <p>Loading...</p>}
                                 {!categoriesLoading && (
                                     <select
+                                        defaultValue={-1}
                                         className="basis-2/3 border-2 rounded-md text-gray-700"
                                         name={"category"}
                                         onChange={(event) => {
                                             setFieldValue("category", event.target.value);
                                         }}
                                     >
+                                        <option value={-1} disabled>
+                                            Žádná
+                                        </option>
                                         {categories &&
                                             categories.map((category) => (
                                                 <option key={category.pk} value={category.pk}>
