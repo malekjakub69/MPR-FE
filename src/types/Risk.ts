@@ -22,9 +22,9 @@ export interface IRisk {
         danger: string;
         trigger: string;
         reaction: string;
-        status: ERiskStatus;
-        impact: ERiskCats;
-        probability: ERiskCats;
+        status: string;
+        impact: string;
+        probability: string;
     };
     model?: string;
 }
@@ -35,9 +35,9 @@ export interface ICreateRisk {
     danger: string;
     trigger: string;
     reaction: string;
-    status: ERiskStatus;
-    impact: ERiskCats;
-    probability: ERiskCats;
+    status: string;
+    impact: string;
+    probability: string;
     project_pk: string;
     category: number;
 }

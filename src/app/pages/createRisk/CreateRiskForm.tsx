@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { object, string } from "yup";
 import { CategoryApi, ProjectApi } from "../../../api";
-import { ERiskCats, ERiskStatus, ICreateRisk, IProject } from "../../../types";
+import { ICreateRisk, IProject } from "../../../types";
 import { CreateCategory } from "../../components/CreateCategory";
 import { RiskInputFormik } from "../../components/RiskInput";
 import "./CreateRisk.css";
@@ -32,9 +32,9 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
         danger: "",
         trigger: "",
         reaction: "",
-        status: ERiskStatus.CONCEPT,
-        impact: ERiskCats.LOW,
-        probability: ERiskCats.LOW,
+        status: "CONCEPT",
+        impact: "LOW",
+        probability: "LOW",
         category: -1,
         project_pk: project.pk.toString(),
     };
@@ -119,11 +119,11 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
                                 setFieldValue("probability", val.target.value);
                             }}
                         >
-                            <FormControlLabel value={ERiskCats.TINY} control={<Radio />} label="Nepatrná" />
-                            <FormControlLabel value={ERiskCats.LOW} control={<Radio />} label="Malá" />
-                            <FormControlLabel value={ERiskCats.MEDIUM} control={<Radio />} label="Střední" />
-                            <FormControlLabel value={ERiskCats.HIGH} control={<Radio />} label="Velká" />
-                            <FormControlLabel value={ERiskCats.EXTREME} control={<Radio />} label="Mimořádne velká" />
+                            <FormControlLabel value={"TINY"} control={<Radio />} label="Nepatrná" />
+                            <FormControlLabel value={"LOW"} control={<Radio />} label="Malá" />
+                            <FormControlLabel value={"MEDIUM"} control={<Radio />} label="Střední" />
+                            <FormControlLabel value={"HIGH"} control={<Radio />} label="Velká" />
+                            <FormControlLabel value={"EXTREME"} control={<Radio />} label="Mimořádne velká" />
                         </RadioGroup>
                         <p>Dopad rizika</p>
                         <RadioGroup
@@ -135,11 +135,11 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
                                 setFieldValue("impact", val.target.value);
                             }}
                         >
-                            <FormControlLabel value={ERiskCats.TINY} control={<Radio />} label="Nepatrný" />
-                            <FormControlLabel value={ERiskCats.LOW} control={<Radio />} label="Malý" />
-                            <FormControlLabel value={ERiskCats.MEDIUM} control={<Radio />} label="Cititelný" />
-                            <FormControlLabel value={ERiskCats.HIGH} control={<Radio />} label="Kritický" />
-                            <FormControlLabel value={ERiskCats.EXTREME} control={<Radio />} label="Katastrofický" />
+                            <FormControlLabel value={"TINY"} control={<Radio />} label="Nepatrný" />
+                            <FormControlLabel value={"LOW"} control={<Radio />} label="Malý" />
+                            <FormControlLabel value={"MEDIUM"} control={<Radio />} label="Cititelný" />
+                            <FormControlLabel value={"HIGH"} control={<Radio />} label="Kritický" />
+                            <FormControlLabel value={"EXTREME"} control={<Radio />} label="Katastrofický" />
                         </RadioGroup>
                         <div>
                             <div className="risks">Kategorie rizík:</div>
