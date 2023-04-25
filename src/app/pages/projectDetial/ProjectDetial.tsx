@@ -6,6 +6,7 @@ import { ProjectApi } from "../../../api";
 import { IProject } from "../../../types";
 import "./ProjectDetail.css";
 import { ShowRisks } from "./ShowRisks";
+import { Matrix3x3 } from "./Matrix3x3";
 
 interface IProps {
     className?: string;
@@ -39,6 +40,11 @@ export const ProjectDetail: FC<IProps> = () => {
                             Create new risk
                         </button>
                     </div>
+                    {
+                        project?.fields?.scale_risk == true ?
+                        <Matrix3x3 /> :
+                        <div>false</div>
+                    }
                 </>
             )}
         </div>
