@@ -17,7 +17,7 @@ export enum ERiskStatus {
 export interface IRisk {
     pk: number;
     fields: {
-        name: string;
+        title: string;
         description: string;
         danger: string;
         trigger: string;
@@ -26,6 +26,8 @@ export interface IRisk {
         impact: string;
         probability: string;
         owner: number
+        project_pk: string;
+        category: number;
     };
     model?: string;
 }
@@ -35,7 +37,7 @@ export interface ICreateRisk {
     description: string;
     danger: string;
     trigger: string;
-    reaction: string;
+    reactions: string;
     status: string;
     impact: string;
     probability: string;

@@ -1,9 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { FC, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
-import { IRisk } from "../../../types";
+import { IcoDelete } from "../../../assets/icons";
+import { IRisk, IUser } from "../../../types";
+import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
 import "./ProjectDetail.css";
 import { UserApi } from "../../../api";
 
@@ -44,56 +46,96 @@ export const ShowRisks: FC<IProps> = () => {
         return <p>Loading...</p>;
     }
 
-    const generateRisk = (risk: IRisk) => {
-        return (
-            <div key={risk.pk} className="project-detail-risk">
-                <h1>{risk.fields.name}</h1>
-                <div className="project-detail-risk-row">
-                    <div className="project-detail-risk-column">
-                        <h3>Vytvoril</h3>
-                        {
-                            users?.map(user =>{
-                                if(user.pk == risk.fields.owner){
-                                    return(<p>{user.fields.name} {user.fields.surname}</p>)
-                                } else {
-                                    return <p></p>
-                                }
-                                
-                            })
-                        }
-                    </div>
-                    <div className="project-detail-risk-column">
-                        <h3>Pravdepodobnost</h3>
-                        <p> {risk.fields.probability}</p>
-                    </div>
-                    <hr />
-                    <div className="project-detail-risk-column">
-                        <h3>Dopad</h3>
-                        <p>{risk.fields.impact}</p>
-                    </div>
-                    <div className="project-detail-risk-column">
-                        <h3>Status</h3>
-                        <p>{risk.fields.status}</p>
-                    </div>
-                </div>
-                <p>
-                    <b>Popis:</b> {risk.fields.description}
-                </p>
-                <hr />
-                <p>
-                    <b>Nebezpečenstvo:</b> {risk.fields.danger}
-                </p>
-                <hr />
-                <p>
-                    <b>Spúštač:</b> {risk.fields.trigger}
-                </p>
-                <hr />
-                <p>
-                    <b>Reakcia:</b> {risk.fields.reactions}
-                </p>
-            </div>
-        );
+    return (
+        <>
+            {data?.map((risk) => (
+                <Risk key={risk.pk} risk={risk} users={users!}/>
+            ))}
+        </>
+    );
+};
+
+interface IPropsRisk {
+    className?: string;
+    risk: IRisk;
+    users: IUser[];
+}
+
+const Risk: FC<IPropsRisk> = ({ risk, users }) => {
+    const [deleteDialog, setDeleteDialog] = useState(false);
+    let { projectId } = useParams();
+    const queryClient = useQueryClient();
+
+    const { mutate: deleteProject } = useMutation({
+        mutationFn: (pk: number) => {
+            return ProjectApi.deleteProjectRisk(pk);
+        },
+        onSuccess: (resp) => {
+            toast.success("Riziko bylo úspěšně smazáno");
+            setDeleteDialog(false);
+            queryClient.resetQueries(["project_risk", projectId]);
+        },
+        onError: () => {
+            toast.error("Smazání rizika selhalo");
+        },
+    });
+
+    const confirmDeleteProject = () => {
+        setDeleteDialog(true);
     };
 
-    return <>{data?.map((risk) => generateRisk(risk))}</>;
+    return (
+        <div key={risk.pk} className="project-detail-risk relative">
+            <h1>{risk.fields.title}</h1>
+            <IcoDelete className="ml-4 cursor-pointer absolute top-4 right-4" width={"25px"} fill="red" onClick={() => confirmDeleteProject()} />
+            <div className="project-detail-risk-row">
+                <div className="project-detail-risk-column">
+                    <h3>Vytvoril</h3>
+                    {
+                        users.map(user => {
+                            if(user.pk == risk.fields.owner){
+                                return(<p>{user.fields.name} {user.fields.surname}</p>)
+                            }
+                        })
+                    }
+                </div>
+                <div className="project-detail-risk-column">
+                    <h3>Pravdepodobnost</h3>
+                    <p> {risk.fields.probability}</p>
+                </div>
+                <hr />
+                <div className="project-detail-risk-column">
+                    <h3>Dopad</h3>
+                    <p>{risk.fields.impact}</p>
+                </div>
+                <div className="project-detail-risk-column">
+                    <h3>Status</h3>
+                    <p>{risk.fields.status}</p>
+                </div>
+            </div>
+            <p>
+                <b>Popis:</b> {risk.fields.description}
+            </p>
+            <hr />
+            <p>
+                <b>Nebezpečenstvo:</b> {risk.fields.danger}
+            </p>
+            <hr />
+            <p>
+                <b>Spúštač:</b> {risk.fields.trigger}
+            </p>
+            <hr />
+            <p>
+                <b>Reakcia:</b> {risk.fields.reactions}
+            </p>
+
+            <ConfirmDeleteDialog
+                open={deleteDialog}
+                name={risk.fields.title}
+                type="riziko"
+                onClose={() => setDeleteDialog(false)}
+                onYes={() => deleteProject(risk.pk)}
+            />
+        </div>
+    );
 };
