@@ -11,6 +11,14 @@ export interface IUser {
     };
 }
 
+export interface ICreateUser {
+    name: string;
+    surname: string;
+    email: string;
+    role: AppRoles;
+    last_login?: string;
+}
+
 export interface IUserLogin {
     login: string;
     password: string;

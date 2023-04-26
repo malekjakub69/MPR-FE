@@ -70,7 +70,7 @@ const Risk: FC<IPropsRisk> = ({ risk, users }) => {
         mutationFn: (pk: number) => {
             return ProjectApi.deleteProjectRisk(pk);
         },
-        onSuccess: (resp) => {
+        onSuccess: () => {
             toast.success("Riziko bylo úspěšně smazáno");
             setDeleteDialog(false);
             queryClient.resetQueries(["project_risk", projectId]);
