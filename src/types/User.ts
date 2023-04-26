@@ -2,11 +2,10 @@ export interface IUser {
     pk: number;
     model?: string;
     fields: {
-        password?: string;
         name: string;
         surname: string;
         email: string;
-        role: AppRoles;
+        role: string;
         last_login?: string;
     };
 }
@@ -15,7 +14,7 @@ export interface ICreateUser {
     name: string;
     surname: string;
     email: string;
-    role: AppRoles;
+    role: string;
     last_login?: string;
 }
 

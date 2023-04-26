@@ -2,12 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FC, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import { ProjectApi } from "../../../api";
+import { RiskApi, UserApi } from "../../../api";
 import { IcoDelete } from "../../../assets/icons";
 import { IRisk, IUser } from "../../../types";
 import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
 import "./ProjectDetail.css";
-import { UserApi } from "../../../api";
 
 interface IProps {
     className?: string;
@@ -20,40 +19,34 @@ interface IProps {
 export const ShowRisks: FC<IProps> = () => {
     let { projectId } = useParams();
 
-    const { data, isLoading } = useQuery({
+    const { data: projectData, isLoading: projectLoading } = useQuery({
         queryKey: ["project_risk", projectId],
-        queryFn: () => (projectId ? ProjectApi.getProjectRisk(projectId) : []),
+        queryFn: () => (projectId ? RiskApi.getProjectRisk(projectId) : []),
         onError: () => {
-            toast.error("Something went wrong while loading project risks");
+            toast.error("Něco se pokazilo při načítání rizik projektu");
         },
-        onSuccess: (data) => {console.log(data)}
     });
 
-    const { data: users, isLoading: loading } = useQuery({
+    const { data: userData, isLoading: userLoading } = useQuery({
         queryKey: ["users"],
-        queryFn: () => (UserApi.getAll()),
+        queryFn: () => UserApi.getAll(),
         onError: () => {
-            toast.error("Something went wrong while loading project risks");
+            toast.error("Něco se pokazilo při načítání uživatelů");
         },
-        onSuccess: (users) => {console.log(users)}
     });
 
-    if (isLoading) {
+    if (projectLoading || userLoading) {
         return <div>Loading...</div>;
     }
 
-    if (!data) {
+    if (!projectData || !userData) {
         return <div>Not Found</div>;
-    }
-
-    if (loading) {
-        return <p>Loading...</p>;
     }
 
     return (
         <>
-            {data?.map((risk) => (
-                <Risk key={risk.pk} risk={risk} users={users!}/>
+            {projectData?.map((risk) => (
+                <Risk key={risk.pk} risk={risk} users={userData} />
             ))}
         </>
     );
@@ -65,14 +58,14 @@ interface IPropsRisk {
     users: IUser[];
 }
 
-const Risk: FC<IPropsRisk> = ({ risk, users }) => {
+export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
     const [deleteDialog, setDeleteDialog] = useState(false);
     let { projectId } = useParams();
     const queryClient = useQueryClient();
 
     const { mutate: deleteProject } = useMutation({
         mutationFn: (pk: number) => {
-            return ProjectApi.deleteProjectRisk(pk);
+            return RiskApi.deleteProjectRisk(pk);
         },
         onSuccess: () => {
             toast.success("Riziko bylo úspěšně smazáno");
@@ -95,13 +88,15 @@ const Risk: FC<IPropsRisk> = ({ risk, users }) => {
             <div className="project-detail-risk-row">
                 <div className="project-detail-risk-column">
                     <h3>Vytvoril</h3>
-                    {
-                        users.map(user => {
-                            if(user.pk == risk.fields.owner){
-                                return(<p>{user.fields.name} {user.fields.surname}</p>)
-                            }
-                        })
-                    }
+                    {users.map((user) => {
+                        if (user.pk == risk.fields.owner) {
+                            return (
+                                <p key={user.pk}>
+                                    {user.fields.name} {user.fields.surname}
+                                </p>
+                            );
+                        }
+                    })}
                 </div>
                 <div className="project-detail-risk-column">
                     <h3>Pravdepodobnost</h3>
@@ -117,19 +112,19 @@ const Risk: FC<IPropsRisk> = ({ risk, users }) => {
                     <p>{risk.fields.status}</p>
                 </div>
             </div>
-            <p>
+            <p key={risk.pk + "description"}>
                 <b>Popis:</b> {risk.fields.description}
             </p>
             <hr />
-            <p>
+            <p key={risk.pk + "danger"}>
                 <b>Nebezpečenstvo:</b> {risk.fields.danger}
             </p>
             <hr />
-            <p>
+            <p key={risk.pk + "trigger"}>
                 <b>Spúštač:</b> {risk.fields.trigger}
             </p>
             <hr />
-            <p>
+            <p key={risk.pk + "reactions"}>
                 <b>Reakcia:</b> {risk.fields.reactions}
             </p>
 

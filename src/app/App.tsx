@@ -7,6 +7,7 @@ import "./App.css";
 import { NotificationCenter } from "./components/NotificationCenter";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CreateProject, CreateRisk, Dashboard, Login, MainLayout, ManageRolesAdmin, ProjectDetail, ProjectTeam } from "./pages";
+import { Risks } from "./pages/risks/Risks";
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false } } });
 
@@ -41,7 +42,8 @@ export default function App() {
                                     <Route path="createproject" element={<CreateProject />} />
                                     <Route path="project/:projectId/createrisk" element={<CreateRisk />} />
                                     <Route path="managerolesadmin" element={<ManageRolesAdmin />} />
-                                    <Route path="projectteam" element={<ProjectTeam />} />
+                                    <Route path="risks" element={<Risks />} />
+                                    <Route path="project/:projectId/projectteam" element={<ProjectTeam />} />
                                     <Route path="*" element={<Dashboard />} />
                                 </Route>
                             </Routes>

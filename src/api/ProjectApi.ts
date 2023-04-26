@@ -13,32 +13,6 @@ export async function deleteProject(pk: number): Promise<any> {
     return await BaseApi.get(`/delete_project/${pk}`);
 }
 
-export async function getProjectRisk(pk: string): Promise<IRisk[]> {
-    return (await BaseApi.get<IRisk[]>(`/project_risks/${pk}`)).data;
-}
-
-export async function deleteProjectRisk(pk: number): Promise<any> {
-    return await BaseApi.get(`/delete_risk/${pk}`);
-}
-
-export async function createProjectRisk(data: ICreateRisk): Promise<IRisk[]> {
-    var bodyFormData = new FormData();
-    bodyFormData.append("title", data.title);
-    bodyFormData.append("description", data.description);
-    bodyFormData.append("danger", data.danger);
-    bodyFormData.append("trigger", data.trigger);
-    bodyFormData.append("reactions", data.reactions);
-    bodyFormData.append("status", data.status.toString());
-    bodyFormData.append("impact", data.impact.toString());
-    bodyFormData.append("probability", data.probability.toString());
-    bodyFormData.append("project", data.project_pk);
-    bodyFormData.append("category", data.category.toString());
-    bodyFormData.append("date_identified", new Date().toISOString().substring(0, 10));
-    bodyFormData.append("date_reaction", new Date().toISOString().substring(0, 10));
-    bodyFormData.append("date_updated", new Date().toISOString().substring(0, 10));
-    return (await BaseApi.post<IRisk[]>(`/create_risk`, bodyFormData)).data;
-}
-
 export async function createProject(data: ICreateProject): Promise<IProject[]> {
     var bodyFormData = new FormData();
     bodyFormData.append("name", data.name);

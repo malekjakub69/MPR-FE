@@ -37,6 +37,9 @@ export const NavMenu: FC<IProps> = (className) => {
                 <button onClick={() => navigate("/")} className="border-2 bg-white w-full h-10 rounded-lg my-1">
                     Domů
                 </button>
+                <button onClick={() => navigate("/risks")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
+                    Seznam rizik
+                </button>
                 <button onClick={() => navigate("/createproject")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
                     Nový projekt
                 </button>

@@ -5,7 +5,7 @@ import { FC, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { object, string } from "yup";
-import { CategoryApi, ProjectApi } from "../../../api";
+import { CategoryApi, ProjectApi, RiskApi } from "../../../api";
 import { ICreateRisk, IProject } from "../../../types";
 import { CreateCategory } from "../../components/CreateCategory";
 import { RiskInputFormik } from "../../components/RiskInput";
@@ -49,7 +49,7 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
 
     const { mutate: createRisk } = useMutation({
         mutationFn: (data: ICreateRisk) => {
-            return ProjectApi.createProjectRisk(data);
+            return RiskApi.createProjectRisk(data);
         },
         onSuccess: () => {
             toast.success("Riziko bylo úspěšně vytvořeno.");

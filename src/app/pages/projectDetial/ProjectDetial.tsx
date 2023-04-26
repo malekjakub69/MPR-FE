@@ -3,13 +3,13 @@ import { FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
-import { IcoDelete } from "../../../assets/icons";
+import { IcoDelete, IcoUser } from "../../../assets/icons";
 import { IProject } from "../../../types";
 import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
 import { Matrix3x3 } from "./Matrix3x3";
+import { Matrix5x5 } from "./Matrix5x5";
 import "./ProjectDetail.css";
 import { ShowRisks } from "./ShowRisks";
-import { Matrix5x5 } from "./Matrix5x5";
 
 interface IProps {
     className?: string;
@@ -59,6 +59,7 @@ export const ProjectDetail: FC<IProps> = () => {
                     <h1 className="flex">
                         {project?.fields?.name}{" "}
                         <IcoDelete className="ml-4 cursor-pointer" width={"25px"} fill="red" onClick={() => (project ? confirmDeleteProject() : null)} />
+                        <IcoUser className="ml-4 cursor-pointer" width={"25px"} onClick={() => navigate("/project/" + projectId + "/projectteam")} />
                     </h1>
                     <ShowRisks />
                     <div className="flex mt-4">

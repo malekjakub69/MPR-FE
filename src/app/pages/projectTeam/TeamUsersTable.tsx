@@ -95,7 +95,7 @@ export const TeamUsersTable: FC<IProps> = () => {
                                 ) : (
                                     <td>Externý uživatel</td>
                                 )}
-                                <td>
+                                <td width={80}>
                                     <IcoDelete
                                         className="ml-4 cursor-pointer  mx-auto mt-1"
                                         width={"30px"}
@@ -116,7 +116,9 @@ export const TeamUsersTable: FC<IProps> = () => {
                     onChange={(e) => setSelectedUser(e.target.value as unknown as number)}
                     value={selectedUser}
                 >
-                    <option value={-1}>Vyberte uživatele</option>
+                    <option value={-1} disabled>
+                        Vyberte uživatele
+                    </option>
                     {allUsers.map((user, index) => {
                         return (
                             <option key={index} value={index}>

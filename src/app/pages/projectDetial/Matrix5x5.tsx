@@ -3,7 +3,7 @@ import * as htmlToImage from "html-to-image";
 import { FC, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import { ProjectApi } from "../../../api";
+import { RiskApi } from "../../../api";
 import { IRisk } from "../../../types";
 import "./ProjectDetail.css";
 
@@ -18,7 +18,7 @@ export const Matrix5x5: FC<IProps> = () => {
 
     useQuery({
         queryKey: ["project_risk", projectId],
-        queryFn: () => (projectId ? ProjectApi.getProjectRisk(projectId) : []),
+        queryFn: () => (projectId ? RiskApi.getProjectRisk(projectId) : []),
         onError: () => {
             toast.error("Something went wrong while loading project risks");
         },

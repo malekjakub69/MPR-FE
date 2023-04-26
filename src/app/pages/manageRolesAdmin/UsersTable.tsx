@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { UserApi } from "../../../api";
 import { IcoDelete } from "../../../assets/icons";
-import { AppRoles, IUser } from "../../../types";
+import { IUser } from "../../../types";
 import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
 import { useAuth } from "../../context/AuthContext";
 import "./ManageRolesAdmin.css";
@@ -24,7 +24,7 @@ export const UsersTable: FC<IProps> = () => {
     const [deleteUserDialog, setDeleteUserDialog] = useState(false);
     const [deletedUser, setDeletedUser] = useState<IUser | undefined>(undefined);
 
-    if (auth.user?.fields.role !== AppRoles.ADMIN) {
+    if (auth.user?.fields.role !== "ADMIN") {
         navigate("/");
     }
 
@@ -44,22 +44,23 @@ export const UsersTable: FC<IProps> = () => {
             queryClient.resetQueries(["users"]);
         },
         onError: () => {
-            toast.error("Smazání uřivatele selhalo");
+            toast.error("Smazání uživatele selhalo");
         },
     });
 
-    // const { mutate: changeRole } = useMutation({
-    //     mutationFn: (user: IUser, newRole: string) => {
-    //         return UserApi.update({ ...user, role: newRole });
-    //     },
-    //     onSuccess: () => {
-    //         toast.success("Uřivatel byl úspěšně smazán");
-    //         queryClient.resetQueries(["users"]);
-    //     },
-    //     onError: () => {
-    //         toast.error("Smazání uřivatele selhalo");
-    //     },
-    // });
+    const { mutate: changeRole } = useMutation({
+        mutationFn: (data: { user: IUser; newRole: string }) => {
+            const newUser = { ...data.user, fields: { ...data.user.fields, role: data.newRole } };
+            return UserApi.update(newUser.fields, newUser.pk);
+        },
+        onSuccess: () => {
+            toast.success("Uřivatel byl úspěšně aktualizován");
+            queryClient.resetQueries(["users"]);
+        },
+        onError: () => {
+            toast.error("Aktualizace uživatele selhala");
+        },
+    });
 
     const confirmDeleteUser = () => {
         deleteUser();
@@ -92,16 +93,16 @@ export const UsersTable: FC<IProps> = () => {
                 <tbody>
                     {users.map((user: IUser) => {
                         return (
-                            <tr>
+                            <tr key={user.pk}>
                                 <td>{user.pk}</td>
                                 <td>
                                     {user.fields.name} {user.fields.surname}
                                 </td>
                                 <td>
-                                    <RadioGroup row className="radio" value={user.fields.role} onChange={() => {}}>
-                                        <FormControlLabel value={AppRoles.ADMIN} control={<Radio />} label="Administrátor" />
-                                        <FormControlLabel value={AppRoles.PROJECT_MANAGER} control={<Radio />} label="Projektový manažér" />
-                                        <FormControlLabel value={AppRoles.USER} control={<Radio />} label="Uživatel" />
+                                    <RadioGroup row className="radio" value={user.fields.role} onChange={(e) => changeRole({ user, newRole: e.target.value })}>
+                                        <FormControlLabel value={"ADMIN"} control={<Radio />} label="Administrátor" />
+                                        <FormControlLabel value={"PROJECT_MANAGER"} control={<Radio />} label="Projektový manažér" />
+                                        <FormControlLabel value={"USER"} control={<Radio />} label="Uživatel" />
                                     </RadioGroup>
                                 </td>
                                 <td width={80}>
