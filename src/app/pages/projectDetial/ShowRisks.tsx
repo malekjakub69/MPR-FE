@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
 import { IRisk } from "../../../types";
 import "./ProjectDetail.css";
+import { UserApi } from "../../../api";
 
 interface IProps {
     className?: string;
@@ -23,9 +24,23 @@ export const ShowRisks: FC<IProps> = () => {
         onError: () => {
             toast.error("Something went wrong while loading project risks");
         },
+        onSuccess: (data) => {console.log(data)}
+    });
+
+    const { data: users, isLoading: loading } = useQuery({
+        queryKey: ["users"],
+        queryFn: () => (UserApi.getAll()),
+        onError: () => {
+            toast.error("Something went wrong while loading project risks");
+        },
+        onSuccess: (users) => {console.log(users)}
     });
 
     if (isLoading) {
+        return <p>Loading...</p>;
+    }
+
+    if (loading) {
         return <p>Loading...</p>;
     }
 
@@ -36,7 +51,16 @@ export const ShowRisks: FC<IProps> = () => {
                 <div className="project-detail-risk-row">
                     <div className="project-detail-risk-column">
                         <h3>Vytvoril</h3>
-                        <p> {risk.fields.name}</p>
+                        {
+                            users?.map(user =>{
+                                if(user.pk == risk.fields.owner){
+                                    return(<p>{user.fields.name} {user.fields.surname}</p>)
+                                } else {
+                                    return <p></p>
+                                }
+                                
+                            })
+                        }
                     </div>
                     <div className="project-detail-risk-column">
                         <h3>Pravdepodobnost</h3>
