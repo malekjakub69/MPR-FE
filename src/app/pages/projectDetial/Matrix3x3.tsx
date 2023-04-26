@@ -1,10 +1,11 @@
-import { FC, useState } from "react";
+import { FC, useState, useRef, MutableRefObject } from "react";
 import "./ProjectDetail.css"
 import { useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
 import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { IRisk } from "../../../types";
+import * as htmlToImage from 'html-to-image';
 
 interface IProps {
     className?: string;
@@ -13,8 +14,9 @@ interface IProps {
 export const Matrix3x3: FC<IProps> = () => {
     let { projectId } = useParams();
     const [matrixData, setMatrixData] = useState<number[]>([0,0,0,0,0,0,0,0,0])
+    const domEl = useRef<HTMLDivElement>(null);
 
-    const { data, isLoading } = useQuery({
+    const { } = useQuery({
         queryKey: ["project_risk", projectId],
         queryFn: () => (projectId ? ProjectApi.getProjectRisk(projectId) : []),
         onError: () => {
@@ -51,31 +53,42 @@ export const Matrix3x3: FC<IProps> = () => {
         setMatrixData(tmpArr)
     };
 
+    const downloadImage = async () => {
+        const dataUrl = await htmlToImage.toPng(domEl.current!);
+     
+        // download image
+        const link = document.createElement('a');
+        link.download = "matrix.png";
+        link.href = dataUrl;
+        link.click();
+      }
+
     return (
         <div className="matrix">
             <h1>Matice rizik</h1>
-            <div className="container">
-            <div className="categoryTagProb"><p>Pravdepodobnost</p></div>
-            <div className="grid3x3">
-                <div className="category" style={{color:"grey"}}><p className="center">HIGH</p></div>
-                <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[0]}</p></div>
-                <div className="cell" style={{backgroundColor:"yellow"}}><p className="center">{matrixData[1]}</p></div>
-                <div className="cell" style={{backgroundColor:"red"}}><p className="center">{matrixData[2]}</p></div>
-                <div className="category" style={{color:"grey"}}><p className="center">MEDIUM</p></div>
-                <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[3]}</p></div>
-                <div className="cell" style={{backgroundColor:"yellow"}}><p className="center">{matrixData[4]}</p></div>
-                <div className="cell" style={{backgroundColor:"yellow"}}><p className="center">{matrixData[5]}</p></div>
-                <div className="category" style={{color:"grey"}}><p className="center">LOW</p></div>
-                <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[6]}</p></div>
-                <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[7]}</p></div>
-                <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[8]}</p></div>
-                <div className="category" style={{color:"grey"}}><p className="center"></p></div>
-                <div className="category" style={{color:"grey"}}><p className="center">LOW</p></div>
-                <div className="category" style={{color:"grey"}}><p className="center">MEDIUM</p></div>
-                <div className="category" style={{color:"grey"}}><p className="center">HIGH</p></div>
+            <div className="container" id="domEl" ref={domEl}>
+                <div className="categoryTagProb"><p>Pravdepodobnost</p></div>
+                <div className="grid3x3">
+                    <div className="category" style={{color:"grey"}}><p className="center">HIGH</p></div>
+                    <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[0]}</p></div>
+                    <div className="cell" style={{backgroundColor:"yellow"}}><p className="center">{matrixData[1]}</p></div>
+                    <div className="cell" style={{backgroundColor:"red"}}><p className="center">{matrixData[2]}</p></div>
+                    <div className="category" style={{color:"grey"}}><p className="center">MEDIUM</p></div>
+                    <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[3]}</p></div>
+                    <div className="cell" style={{backgroundColor:"yellow"}}><p className="center">{matrixData[4]}</p></div>
+                    <div className="cell" style={{backgroundColor:"yellow"}}><p className="center">{matrixData[5]}</p></div>
+                    <div className="category" style={{color:"grey"}}><p className="center">LOW</p></div>
+                    <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[6]}</p></div>
+                    <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[7]}</p></div>
+                    <div className="cell" style={{backgroundColor:"green"}}><p className="center">{matrixData[8]}</p></div>
+                    <div className="category" style={{color:"grey"}}><p className="center"></p></div>
+                    <div className="category" style={{color:"grey"}}><p className="center">LOW</p></div>
+                    <div className="category" style={{color:"grey"}}><p className="center">MEDIUM</p></div>
+                    <div className="category" style={{color:"grey"}}><p className="center">HIGH</p></div>
+                </div>
+                <div className="categoryTagImpact">Dopad</div>
             </div>
-            <div className="categoryTagImpact">Dopad</div>
-            </div>
+            <button onClick={downloadImage}>Stáhnout matici</button>
         </div>
     )
 };
