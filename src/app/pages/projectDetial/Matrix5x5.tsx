@@ -1,10 +1,11 @@
-import { FC, useState } from "react";
+import { FC, useState, useRef } from "react";
 import "./ProjectDetail.css"
 import { useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
 import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { IRisk } from "../../../types";
+import * as htmlToImage from 'html-to-image';
 
 interface IProps {
     className?: string;
@@ -13,6 +14,7 @@ interface IProps {
 export const Matrix5x5: FC<IProps> = () => {
     let { projectId } = useParams();
     const [matrixData, setMatrixData] = useState<number[]>(new Array(25).fill(0))
+    const domEl = useRef<HTMLDivElement>(null);
 
     const { } = useQuery({
         queryKey: ["project_risk", projectId],
@@ -83,11 +85,21 @@ export const Matrix5x5: FC<IProps> = () => {
         })
     };
 
+    const downloadImage = async () => {
+        const dataUrl = await htmlToImage.toPng(domEl.current!);
+     
+        // download image
+        const link = document.createElement('a');
+        link.download = "matrix.png";
+        link.href = dataUrl;
+        link.click();
+      }
+
     return (
         <div className="matrix">
             <h1>Matice rizik</h1>
-            <div className="container">
-            <div className="categoryTagProb" style={{top:"100px", left:"-30px"}}><p>Pravdepodobnost</p></div>
+            <div className="container" id="domEl" ref={domEl}>
+            <div className="categoryTagProb" style={{top:"130px"}}><p>Pravdepodobnost</p></div>
             <div className="grid5x5">
                 <div className="category" style={{color:"grey"}}><p className="center">EXTREME</p></div>
                 <div className="cell" style={{backgroundColor:"yellow"}}><p className="center">{matrixData[0]}</p></div>
@@ -128,6 +140,7 @@ export const Matrix5x5: FC<IProps> = () => {
             </div>
             <div className="categoryTagImpact">Dopad</div>
             </div>
+            <button onClick={downloadImage}>Stáhnout matici</button>
         </div>
     )
 };
