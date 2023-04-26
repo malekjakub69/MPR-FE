@@ -40,6 +40,13 @@ export const NavMenu: FC<IProps> = (className) => {
                 <button onClick={() => navigate("/createproject")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
                     Nový projekt
                 </button>
+                {
+                    auth.user?.fields.role == "ADMIN" ?
+                    <button onClick={() => navigate("/managerolesadmin")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
+                        Spravovat lidi
+                    </button> :
+                    null
+                }
             </div>
             <div className="bg-mine-shaft-400 h-full text-white p-4">
                 <h2>Moje projekty</h2>
