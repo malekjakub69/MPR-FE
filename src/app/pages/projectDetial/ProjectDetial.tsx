@@ -9,6 +9,7 @@ import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
 import { Matrix3x3 } from "./Matrix3x3";
 import "./ProjectDetail.css";
 import { ShowRisks } from "./ShowRisks";
+import { Matrix5x5 } from "./Matrix5x5";
 
 interface IProps {
     className?: string;
@@ -65,7 +66,7 @@ export const ProjectDetail: FC<IProps> = () => {
                             Create new risk
                         </button>
                     </div>
-                    {project?.fields?.scale_risk ? <Matrix3x3 /> : <div>false</div>}
+                    {project?.fields?.scale_risk ? <Matrix3x3 /> : <Matrix5x5 />}
                 </>
             )}
             <ConfirmDeleteDialog
