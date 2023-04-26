@@ -31,8 +31,6 @@ export const ShowRisks: FC<IProps> = () => {
         return <p>Loading...</p>;
     }
 
-    console.log(data);
-
     return (
         <>
             {data?.map((risk) => (

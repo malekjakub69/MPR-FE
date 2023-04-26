@@ -63,7 +63,7 @@ export const ProjectDetail: FC<IProps> = () => {
                             Create new risk
                         </button>
                     </div>
-                    {project?.fields?.scale_risk == true ? <Matrix3x3 /> : <div>false</div>}
+                    {project?.fields?.scale_risk ? <Matrix3x3 /> : <div>false</div>}
                 </>
             )}
             <ConfirmDeleteDialog
