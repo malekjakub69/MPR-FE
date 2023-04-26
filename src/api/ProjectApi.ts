@@ -9,8 +9,16 @@ export async function getOne(pk: string): Promise<IProject> {
     return (await BaseApi.get<IProject[]>(`/project/${pk}`)).data[0];
 }
 
+export async function deleteProject(pk: number): Promise<any> {
+    return await BaseApi.get(`/delete_project/${pk}`);
+}
+
 export async function getProjectRisk(pk: string): Promise<IRisk[]> {
     return (await BaseApi.get<IRisk[]>(`/project_risks/${pk}`)).data;
+}
+
+export async function deleteProjectRisk(pk: number): Promise<any> {
+    return await BaseApi.get(`/delete_risk/${pk}`);
 }
 
 export async function createProjectRisk(data: ICreateRisk): Promise<IRisk[]> {
@@ -19,7 +27,7 @@ export async function createProjectRisk(data: ICreateRisk): Promise<IRisk[]> {
     bodyFormData.append("description", data.description);
     bodyFormData.append("danger", data.danger);
     bodyFormData.append("trigger", data.trigger);
-    bodyFormData.append("reactions", data.reaction);
+    bodyFormData.append("reactions", data.reactions);
     bodyFormData.append("status", data.status.toString());
     bodyFormData.append("impact", data.impact.toString());
     bodyFormData.append("probability", data.probability.toString());

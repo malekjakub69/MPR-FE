@@ -31,7 +31,7 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
         description: "",
         danger: "",
         trigger: "",
-        reaction: "",
+        reactions: "",
         status: "CONCEPT",
         impact: "LOW",
         probability: "LOW",
