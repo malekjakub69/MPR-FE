@@ -17,20 +17,14 @@ export enum ERiskStatus {
 export interface IRisk {
     pk: number;
     fields: {
-        category: number;
-        danger: string;
-        date_identified: string;
-        date_reaction: string;
-        date_updated: string;
+        name: string;
         description: string;
-        impact: string;
-        owner: number;
-        probability: string;
-        project: number;
-        reactions: string;
-        status: string;
-        title: string;
+        danger: string;
         trigger: string;
+        reaction: string;
+        status: string;
+        impact: string;
+        probability: string;
     };
     model?: string;
 }

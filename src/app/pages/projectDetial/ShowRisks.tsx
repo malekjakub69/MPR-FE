@@ -1,11 +1,9 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { FC, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { FC } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
-import { IcoDelete } from "../../../assets/icons";
 import { IRisk } from "../../../types";
-import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
 import "./ProjectDetail.css";
 
 interface IProps {
@@ -31,88 +29,47 @@ export const ShowRisks: FC<IProps> = () => {
         return <p>Loading...</p>;
     }
 
-    console.log(data);
-
-    return (
-        <>
-            {data?.map((risk) => (
-                <Risk key={risk.pk} risk={risk} />
-            ))}
-        </>
-    );
-};
-
-interface IPropsRisk {
-    className?: string;
-    risk: IRisk;
-}
-
-const Risk: FC<IPropsRisk> = ({ risk }) => {
-    const [deleteDialog, setDeleteDialog] = useState(false);
-
-    const { mutate: deleteProject } = useMutation({
-        mutationFn: (pk: number) => {
-            return ProjectApi.deleteProjectRisk(pk);
-        },
-        onSuccess: (resp) => {
-            toast.success("Riziko bylo úspěšně smazáno");
-            setDeleteDialog(false);
-        },
-        onError: () => {
-            toast.error("Smazání rizika selhalo");
-        },
-    });
-
-    const confirmDeleteProject = () => {
-        setDeleteDialog(true);
+    const generateRisk = (risk: IRisk) => {
+        return (
+            <div key={risk.pk} className="project-detail-risk">
+                <h1>{risk.fields.name}</h1>
+                <div className="project-detail-risk-row">
+                    <div className="project-detail-risk-column">
+                        <h3>Vytvoril</h3>
+                        <p> {risk.fields.name}</p>
+                    </div>
+                    <div className="project-detail-risk-column">
+                        <h3>Pravdepodobnost</h3>
+                        <p> {risk.fields.probability}</p>
+                    </div>
+                    <hr />
+                    <div className="project-detail-risk-column">
+                        <h3>Dopad</h3>
+                        <p>{risk.fields.impact}</p>
+                    </div>
+                    <div className="project-detail-risk-column">
+                        <h3>Status</h3>
+                        <p>{risk.fields.status}</p>
+                    </div>
+                </div>
+                <p>
+                    <b>Popis:</b> {risk.fields.description}
+                </p>
+                <hr />
+                <p>
+                    <b>Nebezpečenstvo:</b> {risk.fields.danger}
+                </p>
+                <hr />
+                <p>
+                    <b>Spúštač:</b> {risk.fields.trigger}
+                </p>
+                <hr />
+                <p>
+                    <b>Reakcia:</b> {risk.fields.reaction}
+                </p>
+            </div>
+        );
     };
 
-    return (
-        <div key={risk.pk} className="project-detail-risk relative">
-            <h1>{risk.fields.title}</h1>
-            <IcoDelete className="ml-4 cursor-pointer absolute top-4 right-4" width={"25px"} fill="red" onClick={() => confirmDeleteProject()} />
-            <div className="project-detail-risk-row">
-                <div className="project-detail-risk-column">
-                    <h3>Vytvoril</h3>
-                    <p>{risk.fields.title}</p>
-                </div>
-                <div className="project-detail-risk-column">
-                    <h3>Pravdepodobnost</h3>
-                    <p> {risk.fields.probability}</p>
-                </div>
-                <hr />
-                <div className="project-detail-risk-column">
-                    <h3>Dopad</h3>
-                    <p>{risk.fields.impact}</p>
-                </div>
-                <div className="project-detail-risk-column">
-                    <h3>Status</h3>
-                    <p>{risk.fields.status}</p>
-                </div>
-            </div>
-            <p>
-                <b>Popis:</b> {risk.fields.description}
-            </p>
-            <hr />
-            <p>
-                <b>Nebezpečenstvo:</b> {risk.fields.danger}
-            </p>
-            <hr />
-            <p>
-                <b>Spúštač:</b> {risk.fields.trigger}
-            </p>
-            <hr />
-            <p>
-                <b>Reakcia:</b> {risk.fields.reactions}
-            </p>
-
-            <ConfirmDeleteDialog
-                open={deleteDialog}
-                name={risk.fields.title}
-                type="riziko"
-                onClose={() => setDeleteDialog(false)}
-                onYes={() => deleteProject(risk.pk)}
-            />
-        </div>
-    );
+    return <>{data?.map((risk) => generateRisk(risk))}</>;
 };
