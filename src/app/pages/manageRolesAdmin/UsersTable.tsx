@@ -1,8 +1,15 @@
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import Table from "react-bootstrap/Table";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { UserApi } from "../../../api";
+import { IcoDelete } from "../../../assets/icons";
 import { AppRoles, IUser } from "../../../types";
+import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
+import { useAuth } from "../../context/AuthContext";
 import "./ManageRolesAdmin.css";
 
 interface IProps {
@@ -10,67 +17,114 @@ interface IProps {
 }
 
 export const UsersTable: FC<IProps> = () => {
-    const [users, setUsers] = useState<IUser[]>([]);
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+    const auth = useAuth();
 
-    //TODO get users from backend and store them into users state + add Loader component while fetching data which will be displayed
-    useEffect(() => {
-        // just for testing
-        let tmp = [
-            {
-                pk: 1,
-                model: "any",
-                fields: {
-                    password: "hash",
-                    name: "John",
-                    surname: "Doe",
-                    email: "...",
-                    role: AppRoles.ADMIN,
-                    last_login: "2021-10-10T10:10:10.000Z",
-                },
-            },
-        ];
-        setUsers(tmp);
-    }, []);
+    const [deleteUserDialog, setDeleteUserDialog] = useState(false);
+    const [deletedUser, setDeletedUser] = useState<IUser | undefined>(undefined);
 
-    // TODO -> after changing role not only state is changed for displaying new role but also PUT request on BE must be done
-    const changeRole = (index: number, event: ChangeEvent<HTMLInputElement>, userId: number) => {
-        // changing state for rerendering
-        const newRole = event.target.value as unknown as AppRoles;
-        let tmpArr = [...users];
-        tmpArr[index].fields.role = newRole;
-        setUsers(tmpArr);
+    if (auth.user?.fields.role !== AppRoles.ADMIN) {
+        navigate("/");
+    }
 
-        // TODO make PUT request that changed users role based on his userID to his new role "newRole" on backend
+    const { data: users, isLoading } = useQuery({
+        queryKey: ["users"],
+        queryFn: () => UserApi.getAll(),
+    });
+
+    const { mutate: deleteUser } = useMutation({
+        mutationFn: () => {
+            return deletedUser ? UserApi.deleteUser(deletedUser.pk) : ({} as Promise<any>);
+        },
+        onSuccess: () => {
+            toast.success("Uřivatel byl úspěšně smazán");
+            setDeleteUserDialog(false);
+            setDeletedUser(undefined);
+            queryClient.resetQueries(["users"]);
+        },
+        onError: () => {
+            toast.error("Smazání uřivatele selhalo");
+        },
+    });
+
+    // const { mutate: changeRole } = useMutation({
+    //     mutationFn: (user: IUser, newRole: string) => {
+    //         return UserApi.update({ ...user, role: newRole });
+    //     },
+    //     onSuccess: () => {
+    //         toast.success("Uřivatel byl úspěšně smazán");
+    //         queryClient.resetQueries(["users"]);
+    //     },
+    //     onError: () => {
+    //         toast.error("Smazání uřivatele selhalo");
+    //     },
+    // });
+
+    const confirmDeleteUser = () => {
+        deleteUser();
     };
 
+    const showDeleteUserDialog = (user: IUser) => {
+        setDeletedUser(user);
+        setDeleteUserDialog(true);
+    };
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!users) {
+        return <div>Not Found</div>;
+    }
+
     return (
-        <Table striped bordered hover className="myTable">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Jméno</th>
-                    <th>Příjmení</th>
-                    <th>Role</th>
-                </tr>
-            </thead>
-            <tbody>
-                {users.map((user, index) => {
-                    return (
-                        <tr>
-                            <td>{user.pk}</td>
-                            <td>{user.fields.name}</td>
-                            <td>{user.fields.surname}</td>
-                            <td>
-                                <RadioGroup row className="radio" value={user.fields.role} onChange={(e) => changeRole(index, e, user.pk)}>
-                                    <FormControlLabel value={AppRoles.ADMIN} control={<Radio />} label="Administrátor" />
-                                    <FormControlLabel value={AppRoles.PROJECT_MANAGER} control={<Radio />} label="Projektový manažér" />
-                                    <FormControlLabel value={AppRoles.USER} control={<Radio />} label="Uživatel" />
-                                </RadioGroup>
-                            </td>
-                        </tr>
-                    );
-                })}
-            </tbody>
-        </Table>
+        <>
+            <Table striped bordered hover className="myTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Jméno</th>
+                        <th>Role</th>
+                        <th>Smazat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {users.map((user: IUser) => {
+                        return (
+                            <tr>
+                                <td>{user.pk}</td>
+                                <td>
+                                    {user.fields.name} {user.fields.surname}
+                                </td>
+                                <td>
+                                    <RadioGroup row className="radio" value={user.fields.role} onChange={() => {}}>
+                                        <FormControlLabel value={AppRoles.ADMIN} control={<Radio />} label="Administrátor" />
+                                        <FormControlLabel value={AppRoles.PROJECT_MANAGER} control={<Radio />} label="Projektový manažér" />
+                                        <FormControlLabel value={AppRoles.USER} control={<Radio />} label="Uživatel" />
+                                    </RadioGroup>
+                                </td>
+                                <td width={80}>
+                                    <IcoDelete
+                                        className="ml-4 cursor-pointer  mx-auto mt-1"
+                                        width={"30px"}
+                                        fill="red"
+                                        onClick={() => showDeleteUserDialog(user)}
+                                    />
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </Table>
+
+            <ConfirmDeleteDialog
+                open={deleteUserDialog}
+                name={deletedUser?.fields.name}
+                type="uživatele"
+                onClose={() => setDeleteUserDialog(false)}
+                onYes={() => confirmDeleteUser()}
+            />
+        </>
     );
 };

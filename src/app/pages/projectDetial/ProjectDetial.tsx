@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
@@ -22,6 +22,7 @@ export const ProjectDetail: FC<IProps> = () => {
     const [deleteDialog, setDeleteDialog] = useState(false);
     let { projectId } = useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const { data: project, isLoading } = useQuery({
         queryKey: ["project", projectId],
@@ -35,8 +36,9 @@ export const ProjectDetail: FC<IProps> = () => {
         mutationFn: (pk: number) => {
             return ProjectApi.deleteProject(pk);
         },
-        onSuccess: (resp) => {
+        onSuccess: () => {
             toast.success("Projekt byl úspěšně smazán");
+            queryClient.resetQueries(["project", projectId]);
             navigate("/");
         },
         onError: () => {

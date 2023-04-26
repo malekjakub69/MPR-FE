@@ -6,7 +6,7 @@ interface IProps {
     onClose: () => void;
     onYes: () => void;
     open: boolean;
-    name: string;
+    name?: string;
     type: string;
 }
 
