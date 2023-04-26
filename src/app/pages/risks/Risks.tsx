@@ -1,14 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { RiskApi, UserApi } from "../../../api";
 import "../projectDetial/ProjectDetail.css";
+import Form from 'react-bootstrap/Form';
+import { IRisk } from "../../../types";
+import { FaFilter } from 'react-icons/fa';
 
 interface IProps {
     className?: string;
 }
 
 export const Risks: FC<IProps> = () => {
+    const [name, setName] = useState('')
+    const [filteredRisks, setFilteredRisks] = useState<IRisk[]>([])
+    useEffect(() => {
+        filtering()
+    }, [name]);
+
     const { data: risks, isLoading } = useQuery({
         queryKey: ["risks"],
         queryFn: () => RiskApi.getAll(),
@@ -25,13 +34,37 @@ export const Risks: FC<IProps> = () => {
         },
     });
 
+    function filtering()
+    {
+        let tmpArray: IRisk[] = []
+        risks?.map(risk => {
+            if(risk.fields.title.toLowerCase().includes(name.toLowerCase()))
+            {
+                tmpArray.push(risk)
+            }
+        })
+        setFilteredRisks(tmpArray)
+    }
+
     return (
         <div className="projectTeam ">
             <h1>Seznam rizik</h1>
+            
+            <div className="filter">
+                <div style={{float:"left"}}><FaFilter size={30}/></div>
+                <div style={{float:"left"}}>
+                <Form.Control
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Filtrovat rizika"
+                />
+                </div>
+            </div>
             {risks &&
                 userData &&
                 !isLoading &&
-                risks.map((risk) => (
+                filteredRisks.map((risk) => (
                     <div key={risk.pk} className="project-detail-risk relative border-mine-shaft-200 border-2">
                         <h1>{risk.fields.title}</h1>
                         <div className="project-detail-risk-row">

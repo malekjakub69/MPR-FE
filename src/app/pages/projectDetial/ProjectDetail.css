@@ -171,6 +171,12 @@
     width: 30%;
 }
 
+.filter {
+    width: 50%;
+    margin-bottom: 70px;
+    margin-top: 20px;
+}
+
 @media screen and (max-width: 1300px) {
     .project-detail-risk-row hr {
         width: 100%;
