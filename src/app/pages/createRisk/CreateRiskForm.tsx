@@ -119,11 +119,11 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
                                 setFieldValue("probability", val.target.value);
                             }}
                         >
-                            <FormControlLabel value={"TINY"} control={<Radio />} label="Nepatrná" />
+                            <FormControlLabel disabled={project.fields.scale_risk} value={"TINY"} control={<Radio />} label="Nepatrná" />
                             <FormControlLabel value={"LOW"} control={<Radio />} label="Malá" />
                             <FormControlLabel value={"MEDIUM"} control={<Radio />} label="Střední" />
                             <FormControlLabel value={"HIGH"} control={<Radio />} label="Velká" />
-                            <FormControlLabel value={"EXTREME"} control={<Radio />} label="Mimořádne velká" />
+                            <FormControlLabel disabled={project.fields.scale_risk} value={"EXTREME"} control={<Radio />} label="Mimořádne velká" />
                         </RadioGroup>
                         <p>Dopad rizika</p>
                         <RadioGroup
@@ -135,11 +135,11 @@ export const CreateRiskForm: FC<IProps> = ({ project }) => {
                                 setFieldValue("impact", val.target.value);
                             }}
                         >
-                            <FormControlLabel value={"TINY"} control={<Radio />} label="Nepatrný" />
+                            <FormControlLabel disabled={project.fields.scale_risk} value={"TINY"} control={<Radio />} label="Nepatrný" />
                             <FormControlLabel value={"LOW"} control={<Radio />} label="Malý" />
                             <FormControlLabel value={"MEDIUM"} control={<Radio />} label="Cititelný" />
                             <FormControlLabel value={"HIGH"} control={<Radio />} label="Kritický" />
-                            <FormControlLabel value={"EXTREME"} control={<Radio />} label="Katastrofický" />
+                            <FormControlLabel disabled={project.fields.scale_risk} value={"EXTREME"} control={<Radio />} label="Katastrofický" />
                         </RadioGroup>
                         <div>
                             <div className="risks">Kategorie rizík:</div>
