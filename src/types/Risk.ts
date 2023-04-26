@@ -25,6 +25,7 @@ export interface IRisk {
         status: string;
         impact: string;
         probability: string;
+        owner: number
         project_pk: string;
         category: number;
     };

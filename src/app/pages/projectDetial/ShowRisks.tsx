@@ -4,9 +4,10 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
 import { IcoDelete } from "../../../assets/icons";
-import { IRisk } from "../../../types";
+import { IRisk, IUser } from "../../../types";
 import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
 import "./ProjectDetail.css";
+import { UserApi } from "../../../api";
 
 interface IProps {
     className?: string;
@@ -25,6 +26,16 @@ export const ShowRisks: FC<IProps> = () => {
         onError: () => {
             toast.error("Something went wrong while loading project risks");
         },
+        onSuccess: (data) => {console.log(data)}
+    });
+
+    const { data: users, isLoading: loading } = useQuery({
+        queryKey: ["users"],
+        queryFn: () => (UserApi.getAll()),
+        onError: () => {
+            toast.error("Something went wrong while loading project risks");
+        },
+        onSuccess: (users) => {console.log(users)}
     });
 
     if (isLoading) {
@@ -35,10 +46,14 @@ export const ShowRisks: FC<IProps> = () => {
         return <div>Not Found</div>;
     }
 
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
     return (
         <>
             {data?.map((risk) => (
-                <Risk key={risk.pk} risk={risk} />
+                <Risk key={risk.pk} risk={risk} users={users!}/>
             ))}
         </>
     );
@@ -47,9 +62,10 @@ export const ShowRisks: FC<IProps> = () => {
 interface IPropsRisk {
     className?: string;
     risk: IRisk;
+    users: IUser[];
 }
 
-const Risk: FC<IPropsRisk> = ({ risk }) => {
+const Risk: FC<IPropsRisk> = ({ risk, users }) => {
     const [deleteDialog, setDeleteDialog] = useState(false);
     let { projectId } = useParams();
     const queryClient = useQueryClient();
@@ -79,7 +95,13 @@ const Risk: FC<IPropsRisk> = ({ risk }) => {
             <div className="project-detail-risk-row">
                 <div className="project-detail-risk-column">
                     <h3>Vytvoril</h3>
-                    <p>{risk.fields.title}</p>
+                    {
+                        users.map(user => {
+                            if(user.pk == risk.fields.owner){
+                                return(<p>{user.fields.name} {user.fields.surname}</p>)
+                            }
+                        })
+                    }
                 </div>
                 <div className="project-detail-risk-column">
                     <h3>Pravdepodobnost</h3>
@@ -95,9 +117,6 @@ const Risk: FC<IPropsRisk> = ({ risk }) => {
                     <p>{risk.fields.status}</p>
                 </div>
             </div>
-            <p>
-                <b>Reakcia:</b> {risk.fields.reactions}
-            </p>
             <p>
                 <b>Popis:</b> {risk.fields.description}
             </p>

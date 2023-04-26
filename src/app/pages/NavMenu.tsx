@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FC, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ProjectApi } from "../../api";
-import { AppRoles, IProject } from "../../types";
+import { IProject } from "../../types";
 import { useAuth } from "../context/AuthContext";
 
 interface IProps {
@@ -40,11 +40,11 @@ export const NavMenu: FC<IProps> = (className) => {
                 <button onClick={() => navigate("/createproject")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
                     Nový projekt
                 </button>
-                {auth.user?.fields.role == AppRoles.ADMIN && (
+                {auth.user?.fields.role == "ADMIN" ? (
                     <button onClick={() => navigate("/managerolesadmin")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
-                        Správa uživatelů
+                        Spravovat lidi
                     </button>
-                )}
+                ) : null}
             </div>
             <div className="bg-mine-shaft-400 h-full text-white p-4">
                 <h2>Moje projekty</h2>
