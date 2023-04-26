@@ -1,12 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { FC } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProjectApi } from "../../../api";
+import { IcoDelete } from "../../../assets/icons";
 import { IProject } from "../../../types";
+import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
+import { Matrix3x3 } from "./Matrix3x3";
 import "./ProjectDetail.css";
 import { ShowRisks } from "./ShowRisks";
-import { Matrix3x3 } from "./Matrix3x3";
 
 interface IProps {
     className?: string;
@@ -17,6 +19,7 @@ interface IProps {
 // TODO risks from this particular project will be pass as props into ShowRisk component that displays every single risk (to be done)
 // TODO -> if app role == project manager then there has to be button for adding people into project (maybe somewhere near the Project name) (navigate to /projectteam)
 export const ProjectDetail: FC<IProps> = () => {
+    const [deleteDialog, setDeleteDialog] = useState(false);
     let { projectId } = useParams();
     const navigate = useNavigate();
 
@@ -28,25 +31,48 @@ export const ProjectDetail: FC<IProps> = () => {
         },
     });
 
+    const { mutate: deleteProject } = useMutation({
+        mutationFn: (pk: number) => {
+            return ProjectApi.deleteProject(pk);
+        },
+        onSuccess: (resp) => {
+            toast.success("Projekt byl úspěšně smazán");
+            navigate("/");
+        },
+        onError: () => {
+            toast.error("Smazání projektu selhalo");
+        },
+    });
+
+    const confirmDeleteProject = () => {
+        setDeleteDialog(true);
+    };
+
     return (
         <div className="project-detail">
             {isLoading && <p>Loading...</p>}
             {!isLoading && (
                 <>
-                    <h1>{project?.fields?.name}</h1>
+                    <h1 className="flex">
+                        {project?.fields?.name}{" "}
+                        <IcoDelete className="ml-4 cursor-pointer" width={"25px"} fill="red" onClick={() => (project ? confirmDeleteProject() : null)} />
+                    </h1>
                     <ShowRisks />
                     <div className="flex mt-4">
                         <button onClick={() => navigate("createrisk")} className="basis-full bg-mine-shaft-50 text-white text-xl my-2 mx-10 rounded-lg h-14">
                             Create new risk
                         </button>
                     </div>
-                    {
-                        project?.fields?.scale_risk == true ?
-                        <Matrix3x3 /> :
-                        <div>false</div>
-                    }
+                    {project?.fields?.scale_risk == true ? <Matrix3x3 /> : <div>false</div>}
                 </>
             )}
+            <ConfirmDeleteDialog
+                open={deleteDialog}
+                name={project ? project.fields.name : ""}
+                type="projekt"
+                onClose={() => setDeleteDialog(false)}
+                onYes={() => deleteProject(project ? project.pk : -1)}
+            />
         </div>
     );
 };
