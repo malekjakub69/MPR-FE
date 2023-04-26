@@ -21,7 +21,7 @@ export interface IRisk {
         description: string;
         danger: string;
         trigger: string;
-        reaction: string;
+        reactions: string;
         status: string;
         impact: string;
         probability: string;

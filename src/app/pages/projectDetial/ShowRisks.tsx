@@ -65,7 +65,7 @@ export const ShowRisks: FC<IProps> = () => {
                 </p>
                 <hr />
                 <p>
-                    <b>Reakcia:</b> {risk.fields.reaction}
+                    <b>Reakcia:</b> {risk.fields.reactions}
                 </p>
             </div>
         );
