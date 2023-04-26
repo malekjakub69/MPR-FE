@@ -28,7 +28,11 @@ export const ShowRisks: FC<IProps> = () => {
     });
 
     if (isLoading) {
-        return <p>Loading...</p>;
+        return <div>Loading...</div>;
+    }
+
+    if (!data) {
+        return <div>Not Found</div>;
     }
 
     return (

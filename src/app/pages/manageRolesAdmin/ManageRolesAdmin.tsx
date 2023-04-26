@@ -1,5 +1,5 @@
-import { FC, useEffect, useState } from "react";
-import "./ManageRolesAdmin.css"
+import { FC } from "react";
+import "./ManageRolesAdmin.css";
 import { UsersTable } from "./UsersTable";
 
 interface IProps {
@@ -9,8 +9,8 @@ interface IProps {
 export const ManageRolesAdmin: FC<IProps> = () => {
     return (
         <div className="manageRoles">
-            <h1>Spravovat role</h1>
+            <h1>Spravovat uživatele</h1>
             <UsersTable />
         </div>
-    )
+    );
 };

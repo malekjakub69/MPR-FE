@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
+import { IcoDelete } from "../../../assets/icons";
 import { AppRoles, IUser } from "../../../types";
 import "./ProjectTeam.css";
 
@@ -95,9 +96,12 @@ export const TeamUsersTable: FC<IProps> = () => {
                                     <td>Externý uživatel</td>
                                 )}
                                 <td>
-                                    <Button className="customButton" variant="danger" onClick={() => deleteUser(index, teamUser.pk)}>
-                                        Odstranit
-                                    </Button>
+                                    <IcoDelete
+                                        className="ml-4 cursor-pointer  mx-auto mt-1"
+                                        width={"30px"}
+                                        fill="red"
+                                        onClick={() => deleteUser(index, teamUser.pk)}
+                                    />
                                 </td>
                             </tr>
                         );
