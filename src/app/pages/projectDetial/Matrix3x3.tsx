@@ -14,7 +14,7 @@ export const Matrix3x3: FC<IProps> = () => {
     let { projectId } = useParams();
     const [matrixData, setMatrixData] = useState<number[]>([0,0,0,0,0,0,0,0,0])
 
-    const { data, isLoading } = useQuery({
+    const { } = useQuery({
         queryKey: ["project_risk", projectId],
         queryFn: () => (projectId ? ProjectApi.getProjectRisk(projectId) : []),
         onError: () => {
