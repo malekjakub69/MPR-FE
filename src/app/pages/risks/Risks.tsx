@@ -24,6 +24,9 @@ export const Risks: FC<IProps> = () => {
         onError: () => {
             toast.error("Při načítání rizik došlo k chybě");
         },
+        onSuccess: (data) => {
+            setFilteredRisks(data)
+        }
     });
 
     const { data: userData, isLoading: userLoading } = useQuery({
