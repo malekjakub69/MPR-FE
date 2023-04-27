@@ -132,7 +132,11 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
     return (
         <div key={risk.pk} className="project-detail-risk relative">
             <h1>{risk.fields.title}</h1>
-            <IcoDelete className="ml-4 cursor-pointer absolute top-4 right-4" width={"25px"} fill="red" onClick={() => confirmDeleteProject()} />
+            {
+                projectRole === "MANAGER" ?
+                <IcoDelete className="ml-4 cursor-pointer absolute top-4 right-4" width={"25px"} fill="red" onClick={() => confirmDeleteProject()} /> :
+                null
+            }
             <div className="project-detail-risk-row">
                 <div className="project-detail-risk-column">
                     <h3>Vytvoril</h3>
