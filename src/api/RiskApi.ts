@@ -1,5 +1,5 @@
 import { BaseApi } from ".";
-import { ICreateRisk, IRisk } from "../types";
+import { ICreateRisk, IRisk, IUpdateRisk } from "../types";
 
 export async function getProjectRisk(pk: string): Promise<IRisk[]> {
     return (await BaseApi.get<IRisk[]>(`/project_risks/${pk}`)).data;
@@ -30,3 +30,11 @@ export async function createProjectRisk(data: ICreateRisk): Promise<IRisk[]> {
     bodyFormData.append("date_updated", new Date().toISOString().substring(0, 10));
     return (await BaseApi.post<IRisk[]>(`/create_risk`, bodyFormData)).data;
 }
+
+export async function updateProjectRisk(data: IUpdateRisk): Promise<IRisk[]> {
+    var bodyFormData = new FormData();
+    bodyFormData.append("status", data.status);
+    bodyFormData.append("pk", data.pk.toString());
+    return (await BaseApi.post<IRisk[]>(`/update_risk`, bodyFormData)).data;
+}
+

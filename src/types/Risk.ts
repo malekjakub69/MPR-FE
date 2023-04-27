@@ -44,3 +44,8 @@ export interface ICreateRisk {
     project_pk: string;
     category: number;
 }
+
+export interface IUpdateRisk {
+    status: string;
+    pk: number
+}

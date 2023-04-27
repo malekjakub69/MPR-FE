@@ -4,9 +4,13 @@ import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { RiskApi, UserApi } from "../../../api";
 import { IcoDelete } from "../../../assets/icons";
-import { IRisk, IUser } from "../../../types";
+import { IRisk, IUpdateRisk, IUser } from "../../../types";
 import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
 import "./ProjectDetail.css";
+import { ProjectApi } from "../../../api";
+import { useAuth } from "../../context/AuthContext";
+import { IProjectRole } from "../../../types";
+import Form from 'react-bootstrap/Form';
 
 interface IProps {
     className?: string;
@@ -62,6 +66,17 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
     const [deleteDialog, setDeleteDialog] = useState(false);
     let { projectId } = useParams();
     const queryClient = useQueryClient();
+    const auth = useAuth();
+    const [projectRole, setProjectRole] = useState("")
+
+    const { data: projectUsers, isLoading } = useQuery({
+        queryKey: ["projectUsers"],
+        queryFn: () => (projectId ? ProjectApi.getUsers(projectId) : []),
+        onError: () => {
+            toast.error("Nepodařilo se načíst uživatele projektu.");
+        },
+        onSuccess: (data) => {getProjectRole(data)},
+    });
 
     const { mutate: deleteProject } = useMutation({
         mutationFn: (pk: number) => {
@@ -77,9 +92,42 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
         },
     });
 
+    const { mutate: updateRisk } = useMutation({
+        mutationFn: (data: IUpdateRisk) => {
+            return RiskApi.updateProjectRisk(data);
+        },
+        onSuccess: () => {
+            toast.success("Riziko bylo úspěšně upravené");
+            queryClient.resetQueries(["project_risk", projectId]);
+        },
+        onError: () => {
+            toast.error("upravení rizika selhalo");
+        },
+    });
+
     const confirmDeleteProject = () => {
         setDeleteDialog(true);
     };
+
+    const getProjectRole = (data: IProjectRole[]) => {
+        data?.map(projectUser => {
+            if(auth.user?.pk == projectUser.fields.user){
+                setProjectRole(projectUser.fields.role)
+            }
+        })
+    }
+    
+    const changeStatus = (status: string) => {
+        var data = {
+            "status": status,
+            "pk": risk.pk
+        }
+        updateRisk(data)
+    };
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div key={risk.pk} className="project-detail-risk relative">
@@ -109,7 +157,16 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
                 </div>
                 <div className="project-detail-risk-column">
                     <h3>Status</h3>
-                    <p>{risk.fields.status}</p>
+                    {
+                        projectRole === "MANAGER" ? 
+                        <Form.Select aria-label="Default select example" defaultValue={risk.fields.status} onChange={(e) => changeStatus(e.target.value)}>
+                            <option value="CONCEPT" >CONCEPT</option>
+                            <option value="ACTIVE" >ACTIVE</option>
+                            <option value="CLOSED">CLOSED</option>
+                        </Form.Select> : 
+                        <p>{risk.fields.status}</p>
+                        
+                    }
                 </div>
             </div>
             <p key={risk.pk + "description"}>
