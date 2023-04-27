@@ -10,6 +10,8 @@ import { Matrix3x3 } from "./Matrix3x3";
 import { Matrix5x5 } from "./Matrix5x5";
 import "./ProjectDetail.css";
 import { ShowRisks } from "./ShowRisks";
+import { IProjectRole } from "../../../types";
+import { useAuth } from "../../context/AuthContext";
 
 interface IProps {
     className?: string;
@@ -24,6 +26,8 @@ export const ProjectDetail: FC<IProps> = () => {
     let { projectId } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const auth = useAuth();
+    const [projectRole, setProjectRole] = useState("")
 
     const { data: project, isLoading } = useQuery({
         queryKey: ["project", projectId],
@@ -31,6 +35,15 @@ export const ProjectDetail: FC<IProps> = () => {
         onError: () => {
             toast.error("Something went wrong while loading project");
         },
+    });
+
+    const { data: projectUsers } = useQuery({
+        queryKey: ["projectUsers"],
+        queryFn: () => (projectId ? ProjectApi.getUsers(projectId) : []),
+        onError: () => {
+            toast.error("Nepodařilo se načíst uživatele projektu.");
+        },
+        onSuccess: (data) => {getProjectRole(data)},
     });
 
     const { mutate: deleteProject } = useMutation({
@@ -51,6 +64,14 @@ export const ProjectDetail: FC<IProps> = () => {
         setDeleteDialog(true);
     };
 
+    const getProjectRole = (data: IProjectRole[]) => {
+        data?.map(projectUser => {
+            if(auth.user?.pk == projectUser.fields.user){
+                setProjectRole(projectUser.fields.role)
+            }
+        })
+    }
+
     return (
         <div className="project-detail">
             {isLoading && <p>Loading...</p>}
@@ -58,8 +79,15 @@ export const ProjectDetail: FC<IProps> = () => {
                 <>
                     <h1 className="flex">
                         {project?.fields?.name}{" "}
-                        <IcoDelete className="ml-4 cursor-pointer" width={"25px"} fill="red" onClick={() => (project ? confirmDeleteProject() : null)} />
-                        <IcoUser className="ml-4 cursor-pointer" width={"25px"} onClick={() => navigate("/project/" + projectId + "/projectteam")} />
+                        {
+                            projectRole === "MANAGER" ?
+                            <>
+                                <IcoDelete className="ml-4 cursor-pointer" width={"25px"} fill="red" onClick={() => (project ? confirmDeleteProject() : null)} />
+                                <IcoUser className="ml-4 cursor-pointer" width={"25px"} onClick={() => navigate("/project/" + projectId + "/projectteam")} />
+                            </> :
+                            null
+                        }
+                        
                     </h1>
                     <ShowRisks />
                     <div className="flex mt-4">
