@@ -19,3 +19,13 @@ export interface IProject {
     };
     model?: string;
 }
+
+export interface IProjectRole {
+    pk: number;
+    model?: string;
+    fields: {
+        project: number;
+        role: string;
+        user: number;
+    };
+}

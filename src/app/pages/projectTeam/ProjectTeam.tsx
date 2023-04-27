@@ -7,9 +7,9 @@ interface IProps {
 
 export const ProjectTeam: FC<IProps> = () => {
     return (
-        <div className="projectTeam">
+        <div className="projectTeam rounded-xl">
             <h1>Lidé na projektu</h1>
             <TeamUsersTable />
         </div>
-    )
+    );
 };
