@@ -91,9 +91,13 @@ export const ProjectDetail: FC<IProps> = () => {
                     </h1>
                     <ShowRisks />
                     <div className="flex mt-4">
-                        <button onClick={() => navigate("createrisk")} className="basis-full bg-mine-shaft-50 text-white text-xl my-2 mx-10 rounded-lg h-14">
-                            Create new risk
-                        </button>
+                        {
+                            projectRole !== "EXTERNAL" ?
+                            <button onClick={() => navigate("createrisk")} className="basis-full bg-mine-shaft-50 text-white text-xl my-2 mx-10 rounded-lg h-14">
+                                Vytvořit riziko
+                            </button> :
+                            null
+                        }
                     </div>
                     {project?.fields?.scale_risk ? <Matrix3x3 /> : <Matrix5x5 />}
                 </>
