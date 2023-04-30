@@ -168,6 +168,7 @@
     padding: 15px;
     color: white;
     cursor: pointer;
+    float: right;
     width: 30%;
 }
 

@@ -1,16 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FC, useState } from "react";
+import Form from "react-bootstrap/Form";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import { RiskApi, UserApi } from "../../../api";
+import { CategoryApi, ProjectApi, RiskApi, UserApi } from "../../../api";
 import { IcoDelete } from "../../../assets/icons";
 import { IRisk, IUpdateRisk, IUser } from "../../../types";
 import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
-import "./ProjectDetail.css";
-import { ProjectApi } from "../../../api";
 import { useAuth } from "../../context/AuthContext";
-import { IProjectRole } from "../../../types";
-import Form from 'react-bootstrap/Form';
+import "./ProjectDetail.css";
 
 interface IProps {
     className?: string;
@@ -67,15 +65,22 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
     let { projectId } = useParams();
     const queryClient = useQueryClient();
     const auth = useAuth();
-    const [projectRole, setProjectRole] = useState("")
+    const [myRole, setMyRole] = useState<string | undefined>("NONE");
 
-    const { data: projectUsers, isLoading } = useQuery({
+    const { data: categories, isLoading: categoriesLoading } = useQuery({
+        queryKey: ["categories"],
+        queryFn: () => CategoryApi.getAll(),
+    });
+
+    const { isLoading } = useQuery({
         queryKey: ["projectUsers"],
         queryFn: () => (projectId ? ProjectApi.getUsers(projectId) : []),
         onError: () => {
             toast.error("Nepodařilo se načíst uživatele projektu.");
         },
-        onSuccess: (data) => {getProjectRole(data)},
+        onSuccess: (data) => {
+            setMyRole(data.find((item) => item.fields.user === auth.user?.pk)?.fields.role);
+        },
     });
 
     const { mutate: deleteProject } = useMutation({
@@ -109,20 +114,12 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
         setDeleteDialog(true);
     };
 
-    const getProjectRole = (data: IProjectRole[]) => {
-        data?.map(projectUser => {
-            if(auth.user?.pk == projectUser.fields.user){
-                setProjectRole(projectUser.fields.role)
-            }
-        })
-    }
-    
     const changeStatus = (status: string) => {
         var data = {
-            "status": status,
-            "pk": risk.pk
-        }
-        updateRisk(data)
+            status: status,
+            pk: risk.pk,
+        };
+        updateRisk(data);
     };
 
     if (isLoading) {
@@ -132,11 +129,10 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
     return (
         <div key={risk.pk} className="project-detail-risk relative">
             <h1>{risk.fields.title}</h1>
-            {
-                projectRole === "MANAGER" ?
-                <IcoDelete className="ml-4 cursor-pointer absolute top-4 right-4" width={"25px"} fill="red" onClick={() => confirmDeleteProject()} /> :
-                null
-            }
+            {myRole === "MANAGER" ||
+                (auth.user?.fields.role == "ADMIN" && (
+                    <IcoDelete className="ml-4 cursor-pointer absolute top-4 right-4" width={"25px"} fill="red" onClick={() => confirmDeleteProject()} />
+                ))}
             <div className="project-detail-risk-row">
                 <div className="project-detail-risk-column">
                     <h3>Vytvoril</h3>
@@ -161,20 +157,23 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
                 </div>
                 <div className="project-detail-risk-column">
                     <h3>Status</h3>
-                    {
-                        projectRole === "MANAGER" ? 
+                    {myRole === "MANAGER" || auth.user?.fields.role == "ADMIN" ? (
                         <Form.Select aria-label="Default select example" defaultValue={risk.fields.status} onChange={(e) => changeStatus(e.target.value)}>
-                            <option value="CONCEPT" >CONCEPT</option>
-                            <option value="ACTIVE" >ACTIVE</option>
+                            <option value="CONCEPT">CONCEPT</option>
+                            <option value="ACTIVE">ACTIVE</option>
                             <option value="CLOSED">CLOSED</option>
-                        </Form.Select> : 
+                        </Form.Select>
+                    ) : (
                         <p>{risk.fields.status}</p>
-                        
-                    }
+                    )}
                 </div>
             </div>
             <p key={risk.pk + "description"}>
                 <b>Popis:</b> {risk.fields.description}
+            </p>
+
+            <p>
+                <b>Kategoire:</b> {categories?.find((category) => category.pk === risk.fields.category)?.fields.name}
             </p>
             <hr />
             <p key={risk.pk + "danger"}>

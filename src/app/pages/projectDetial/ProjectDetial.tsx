@@ -6,12 +6,11 @@ import { ProjectApi } from "../../../api";
 import { IcoDelete, IcoUser } from "../../../assets/icons";
 import { IProject } from "../../../types";
 import { ConfirmDeleteDialog } from "../../components/ConfirmDeleteDialog";
+import { useAuth } from "../../context/AuthContext";
 import { Matrix3x3 } from "./Matrix3x3";
 import { Matrix5x5 } from "./Matrix5x5";
 import "./ProjectDetail.css";
 import { ShowRisks } from "./ShowRisks";
-import { IProjectRole } from "../../../types";
-import { useAuth } from "../../context/AuthContext";
 
 interface IProps {
     className?: string;
@@ -27,7 +26,7 @@ export const ProjectDetail: FC<IProps> = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const auth = useAuth();
-    const [projectRole, setProjectRole] = useState("")
+    const [myRole, setMyRole] = useState<string | undefined>("NONE");
 
     const { data: project, isLoading } = useQuery({
         queryKey: ["project", projectId],
@@ -43,7 +42,9 @@ export const ProjectDetail: FC<IProps> = () => {
         onError: () => {
             toast.error("Nepodařilo se načíst uživatele projektu.");
         },
-        onSuccess: (data) => {getProjectRole(data)},
+        onSuccess: (data) => {
+            setMyRole(data.find((item) => item.fields.user === auth.user?.pk)?.fields.role);
+        },
     });
 
     const { mutate: deleteProject } = useMutation({
@@ -64,40 +65,35 @@ export const ProjectDetail: FC<IProps> = () => {
         setDeleteDialog(true);
     };
 
-    const getProjectRole = (data: IProjectRole[]) => {
-        data?.map(projectUser => {
-            if(auth.user?.pk == projectUser.fields.user){
-                setProjectRole(projectUser.fields.role)
-            }
-        })
-    }
-
     return (
         <div className="project-detail">
             {isLoading && <p>Loading...</p>}
             {!isLoading && (
                 <>
                     <h1 className="flex">
-                        {project?.fields?.name}{" "}
-                        {
-                            projectRole === "MANAGER" ?
-                            <>
-                                <IcoDelete className="ml-4 cursor-pointer" width={"25px"} fill="red" onClick={() => (project ? confirmDeleteProject() : null)} />
-                                <IcoUser className="ml-4 cursor-pointer" width={"25px"} onClick={() => navigate("/project/" + projectId + "/projectteam")} />
-                            </> :
-                            null
-                        }
-                        
+                        {project?.fields?.name}
+                        <>
+                            {(myRole === "MANAGER" || auth.user?.fields.role == "ADMIN") && (
+                                <IcoDelete
+                                    className="ml-4 cursor-pointer"
+                                    width={"25px"}
+                                    fill="red"
+                                    onClick={() => (project ? confirmDeleteProject() : null)}
+                                />
+                            )}
+                            <IcoUser className="ml-4 cursor-pointer" width={"25px"} onClick={() => navigate("/project/" + projectId + "/projectteam")} />
+                        </>
                     </h1>
                     <ShowRisks />
                     <div className="flex mt-4">
-                        {
-                            projectRole !== "EXTERNAL" ?
-                            <button onClick={() => navigate("createrisk")} className="basis-full bg-mine-shaft-50 text-white text-xl my-2 mx-10 rounded-lg h-14">
+                        {(myRole !== "EXTERNAL" || auth.user?.fields.role == "ADMIN") && (
+                            <button
+                                onClick={() => navigate("createrisk")}
+                                className="basis-full bg-mine-shaft-50 text-white text-xl my-2 mx-10 rounded-lg h-14"
+                            >
                                 Vytvořit riziko
-                            </button> :
-                            null
-                        }
+                            </button>
+                        )}
                     </div>
                     {project?.fields?.scale_risk ? <Matrix3x3 /> : <Matrix5x5 />}
                 </>

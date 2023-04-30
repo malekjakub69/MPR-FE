@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { ProjectApi, UserApi } from "../../../api";
 import { IcoDelete } from "../../../assets/icons";
+import { useAuth } from "../../context/AuthContext";
 import "./ProjectTeam.css";
 
 interface IProps {
@@ -16,10 +17,13 @@ interface IProps {
 
 export const TeamUsersTable: FC<IProps> = () => {
     const { projectId } = useParams();
+    const auth = useAuth();
     const queryClient = useQueryClient();
 
     const [selectedUser, setSelectedUser] = useState(-1);
     const [selectedRole, setSelectedRole] = useState("NONE");
+
+    const [myRole, setMyRole] = useState<string | undefined>("NONE");
 
     const { data: users } = useQuery({
         queryKey: ["users"],
@@ -34,6 +38,9 @@ export const TeamUsersTable: FC<IProps> = () => {
         queryFn: () => (projectId ? ProjectApi.getUsers(projectId) : []),
         onError: () => {
             toast.error("Nepodařilo se načíst uživatele projektu.");
+        },
+        onSuccess: (data) => {
+            setMyRole(data.find((item) => item.fields.user === auth.user?.pk)?.fields.role);
         },
     });
 
@@ -105,60 +112,65 @@ export const TeamUsersTable: FC<IProps> = () => {
                                     {teamUser.fields.role === "EMPLOYEE" && "Zaměstnanec"}
                                 </td>
                                 <td width={80}>
-                                    <IcoDelete
-                                        className="ml-4 cursor-pointer  mx-auto mt-1"
-                                        width={"30px"}
-                                        fill="red"
-                                        onClick={() => deleteProjectUser(teamUser.pk)}
-                                    />
+                                    {(teamUser.fields.user !== auth.user?.pk || auth.user?.fields.role == "ADMIN") &&
+                                        (myRole == "MANAGER" || myRole == "EMPLOYEE" || auth.user?.fields.role == "ADMIN") && (
+                                            <IcoDelete
+                                                className="ml-4 cursor-pointer  mx-auto mt-1"
+                                                width={"30px"}
+                                                fill="red"
+                                                onClick={() => deleteProjectUser(teamUser.pk)}
+                                            />
+                                        )}
                                 </td>
                             </tr>
                         );
                     })}
                 </tbody>
             </Table>
-            <div>
-                <h3>Přidat člena do tímu</h3>
-                <div className="flex flex-row my-2">
-                    <div className="items-center  basis-1/6 mr-2">Uživatel</div>
-                    <div className="items-center basis-5/6">
-                        <Form.Select
-                            aria-label="Default select example"
-                            className="customSelect m-0"
-                            onChange={(e) => setSelectedUser(e.target.value as unknown as number)}
-                            value={selectedUser}
-                        >
-                            <option value={-1} disabled></option>
-                            {users?.map((user, index) => {
-                                if (projectUsers?.find((projectUser) => projectUser.fields.user === user.pk)) return null;
-                                return (
-                                    <option key={index} value={user.pk}>
-                                        {user.fields.name} {user.fields.surname} ({user.fields.role})
-                                    </option>
-                                );
-                            })}
-                        </Form.Select>
+            {(myRole == "MANAGER" || myRole == "EMPLOYEE" || auth.user?.fields.role == "ADMIN") && (
+                <div>
+                    <h3>Přidat člena do tímu</h3>
+                    <div className="flex flex-row my-2">
+                        <div className="items-center  basis-1/6 mr-2">Uživatel</div>
+                        <div className="items-center basis-5/6">
+                            <Form.Select
+                                aria-label="Default select example"
+                                className="customSelect m-0"
+                                onChange={(e) => setSelectedUser(e.target.value as unknown as number)}
+                                value={selectedUser}
+                            >
+                                <option value={-1} disabled></option>
+                                {users?.map((user, index) => {
+                                    if (projectUsers?.find((projectUser) => projectUser.fields.user === user.pk)) return null;
+                                    return (
+                                        <option key={index} value={user.pk}>
+                                            {user.fields.name} {user.fields.surname} ({user.fields.role})
+                                        </option>
+                                    );
+                                })}
+                            </Form.Select>
+                        </div>
                     </div>
-                </div>
 
-                <div className="flex flex-row my-2">
-                    <div className="items-center basis-1/6 mr-2">Role</div>
-                    <div className="items-center basis-5/6">
-                        <Form.Select
-                            aria-label="Default select example"
-                            className="customSelect m-0"
-                            onChange={(e) => setSelectedRole(e.target.value)}
-                            value={selectedRole}
-                        >
-                            <option className="h-0" value={"NONE"} disabled></option>
-                            <option value={"MANAGER"}>Manažér</option>
-                            <option value={"EXTERNAL"}>Externý uživatel</option>
-                            <option value={"EMPLOYEE"}>Zaměstnanec</option>
-                        </Form.Select>
+                    <div className="flex flex-row my-2">
+                        <div className="items-center basis-1/6 mr-2">Role</div>
+                        <div className="items-center basis-5/6">
+                            <Form.Select
+                                aria-label="Default select example"
+                                className="customSelect m-0"
+                                onChange={(e) => setSelectedRole(e.target.value)}
+                                value={selectedRole}
+                            >
+                                <option className="h-0" value={"NONE"} disabled></option>
+                                <option value={"MANAGER"}>Manažér</option>
+                                <option value={"EXTERNAL"}>Externý uživatel</option>
+                                <option value={"EMPLOYEE"}>Zaměstnanec</option>
+                            </Form.Select>
+                        </div>
                     </div>
+                    <Button onClick={addUser}>Přidat</Button>
                 </div>
-                <Button onClick={addUser}>Přidat</Button>
-            </div>
+            )}
         </div>
     );
 };

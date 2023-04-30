@@ -1,22 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 import { FC, useEffect, useState } from "react";
+import Form from "react-bootstrap/Form";
 import toast from "react-hot-toast";
-import { RiskApi, UserApi } from "../../../api";
-import "../projectDetial/ProjectDetail.css";
-import Form from 'react-bootstrap/Form';
+import { FaFilter } from "react-icons/fa";
+import { CategoryApi, RiskApi, UserApi } from "../../../api";
 import { IRisk } from "../../../types";
-import { FaFilter } from 'react-icons/fa';
+import "../projectDetial/ProjectDetail.css";
 
 interface IProps {
     className?: string;
 }
 
 export const Risks: FC<IProps> = () => {
-    const [name, setName] = useState('')
-    const [filteredRisks, setFilteredRisks] = useState<IRisk[]>([])
+    const [name, setName] = useState("");
+    const [filteredRisks, setFilteredRisks] = useState<IRisk[]>([]);
+
     useEffect(() => {
-        filtering()
+        filtering();
     }, [name]);
+
+    const { data: categories, isLoading: categoriesLoading } = useQuery({
+        queryKey: ["categories"],
+        queryFn: () => CategoryApi.getAll(),
+    });
 
     const { data: risks, isLoading } = useQuery({
         queryKey: ["risks"],
@@ -25,8 +31,8 @@ export const Risks: FC<IProps> = () => {
             toast.error("Při načítání rizik došlo k chybě");
         },
         onSuccess: (data) => {
-            setFilteredRisks(data)
-        }
+            setFilteredRisks(data);
+        },
     });
 
     const { data: userData, isLoading: userLoading } = useQuery({
@@ -37,31 +43,26 @@ export const Risks: FC<IProps> = () => {
         },
     });
 
-    function filtering()
-    {
-        let tmpArray: IRisk[] = []
-        risks?.map(risk => {
-            if(risk.fields.title.toLowerCase().includes(name.toLowerCase()))
-            {
-                tmpArray.push(risk)
+    function filtering() {
+        let tmpArray: IRisk[] = [];
+        risks?.map((risk) => {
+            if (risk.fields.title.toLowerCase().includes(name.toLowerCase())) {
+                tmpArray.push(risk);
             }
-        })
-        setFilteredRisks(tmpArray)
+        });
+        setFilteredRisks(tmpArray);
     }
 
     return (
         <div className="projectTeam ">
             <h1>Seznam rizik</h1>
-            
+
             <div className="filter">
-                <div style={{float:"left"}}><FaFilter size={30}/></div>
-                <div style={{float:"left"}}>
-                <Form.Control
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Filtrovat rizika"
-                />
+                <div style={{ float: "left" }}>
+                    <FaFilter size={30} className="mr-2 mt-1" />
+                </div>
+                <div style={{ float: "left" }}>
+                    <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Filtrovat rizika" />
                 </div>
             </div>
             {risks &&
@@ -99,6 +100,9 @@ export const Risks: FC<IProps> = () => {
                         </div>
                         <p>
                             <b>Popis:</b> {risk.fields.description}
+                        </p>
+                        <p>
+                            <b>Kategoire:</b> {categories?.find((category) => category.pk === risk.fields.category)?.fields.name}
                         </p>
                     </div>
                 ))}

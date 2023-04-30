@@ -34,15 +34,22 @@ export const NavMenu: FC<IProps> = (className) => {
                 <img onClick={() => navigate("/")} src={logo} className={"w-4/6 object-contain cursor-pointer"} alt={"logo"} />
             </div>
             <div className="bg-mine-shaft-400 p-2">
-                <button onClick={() => navigate("/")} className="border-2 bg-white w-full h-10 rounded-lg my-1">
+                <div className="text-white text-center">
+                    Uživatel: {auth.user?.fields.name} {auth.user?.fields.surname}
+                    <br />
+                    Role: {auth.user?.fields.role}
+                </div>
+                <button onClick={() => navigate("/")} className="border-2 bg-white w-full h-10 rounded-lg my-1 mt-4">
                     Domů
                 </button>
                 <button onClick={() => navigate("/risks")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
                     Seznam rizik
                 </button>
-                <button onClick={() => navigate("/createproject")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
-                    Nový projekt
-                </button>
+                {auth.user?.fields.role !== "USER" && (
+                    <button onClick={() => navigate("/createproject")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
+                        Nový projekt
+                    </button>
+                )}
                 {auth.user?.fields.role == "ADMIN" ? (
                     <button onClick={() => navigate("/managerolesadmin")} className="border-2 bg-white w-full h-10 rounded-lg  my-1">
                         Spravovat lidi
@@ -50,7 +57,7 @@ export const NavMenu: FC<IProps> = (className) => {
                 ) : null}
             </div>
             <div className="bg-mine-shaft-400 h-full text-white p-4">
-                <h2>Moje projekty</h2>
+                {projects.length !== 0 && <h2>Moje projekty</h2>}
                 {isLoading && <p>Loading...</p>}
                 {!isLoading && (
                     <ul>
@@ -63,7 +70,7 @@ export const NavMenu: FC<IProps> = (className) => {
                 )}
             </div>
 
-            <button className="bg-red h-12" onClick={() => auth.logOut()}>
+            <button className="bg-red h-16  " onClick={() => auth.logOut()}>
                 Log out
             </button>
         </div>

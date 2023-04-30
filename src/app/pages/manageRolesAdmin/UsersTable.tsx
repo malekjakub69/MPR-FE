@@ -86,6 +86,7 @@ export const UsersTable: FC<IProps> = () => {
                     <tr>
                         <th>#</th>
                         <th>Jméno</th>
+                        <th>Email</th>
                         <th>Role</th>
                         <th>Smazat</th>
                     </tr>
@@ -98,6 +99,7 @@ export const UsersTable: FC<IProps> = () => {
                                 <td>
                                     {user.fields.name} {user.fields.surname}
                                 </td>
+                                <td>{user.fields.email}</td>
                                 <td>
                                     <RadioGroup row className="radio" value={user.fields.role} onChange={(e) => changeRole({ user, newRole: e.target.value })}>
                                         <FormControlLabel value={"ADMIN"} control={<Radio />} label="Administrátor" />
