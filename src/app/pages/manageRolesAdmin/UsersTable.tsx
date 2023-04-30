@@ -84,7 +84,6 @@ export const UsersTable: FC<IProps> = () => {
             <Table striped bordered hover className="myTable">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Jméno</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -95,7 +94,6 @@ export const UsersTable: FC<IProps> = () => {
                     {users.map((user: IUser) => {
                         return (
                             <tr key={user.pk}>
-                                <td>{user.pk}</td>
                                 <td>
                                     {user.fields.name} {user.fields.surname}
                                 </td>

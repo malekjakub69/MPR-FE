@@ -89,7 +89,6 @@ export const TeamUsersTable: FC<IProps> = () => {
             <Table striped bordered className="myTable">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Jméno</th>
                         <th>Příjmení</th>
                         <th>Role</th>
@@ -103,7 +102,6 @@ export const TeamUsersTable: FC<IProps> = () => {
                         console.log(users);
                         return (
                             <tr key={teamUser.pk}>
-                                <td>{teamUser.pk}</td>
                                 <td>{user?.fields.name}</td>
                                 <td>{user?.fields.surname}</td>
                                 <td>
@@ -113,7 +111,7 @@ export const TeamUsersTable: FC<IProps> = () => {
                                 </td>
                                 <td width={80}>
                                     {(teamUser.fields.user !== auth.user?.pk || auth.user?.fields.role == "ADMIN") &&
-                                        (myRole == "MANAGER" || myRole == "EMPLOYEE" || auth.user?.fields.role == "ADMIN") && (
+                                        (myRole == "MANAGER" || auth.user?.fields.role == "ADMIN") && (
                                             <IcoDelete
                                                 className="ml-4 cursor-pointer  mx-auto mt-1"
                                                 width={"30px"}
@@ -127,7 +125,7 @@ export const TeamUsersTable: FC<IProps> = () => {
                     })}
                 </tbody>
             </Table>
-            {(myRole == "MANAGER" || myRole == "EMPLOYEE" || auth.user?.fields.role == "ADMIN") && (
+            {(myRole == "MANAGER" || auth.user?.fields.role == "ADMIN") && (
                 <div>
                     <h3>Přidat člena do tímu</h3>
                     <div className="flex flex-row my-2">

@@ -129,10 +129,9 @@ export const Risk: FC<IPropsRisk> = ({ risk, users }) => {
     return (
         <div key={risk.pk} className="project-detail-risk relative">
             <h1>{risk.fields.title}</h1>
-            {myRole === "MANAGER" ||
-                (auth.user?.fields.role == "ADMIN" && (
-                    <IcoDelete className="ml-4 cursor-pointer absolute top-4 right-4" width={"25px"} fill="red" onClick={() => confirmDeleteProject()} />
-                ))}
+            {(myRole === "MANAGER" || auth.user?.fields.role == "ADMIN" || risk.fields.owner == auth.user?.pk) && (
+                <IcoDelete className="ml-4 cursor-pointer absolute top-4 right-4" width={"25px"} fill="red" onClick={() => confirmDeleteProject()} />
+            )}
             <div className="project-detail-risk-row">
                 <div className="project-detail-risk-column">
                     <h3>Vytvoril</h3>
