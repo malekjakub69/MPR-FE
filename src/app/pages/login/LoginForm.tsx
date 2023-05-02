@@ -50,9 +50,6 @@ export const LoginForm: FC<IProps> = () => {
                         placeholder={"Password"}
                         required
                     />
-                    <a href="/" className=" text-slate-300">
-                        Zapomenuté heslo
-                    </a>
                     <button className="bg-red py-2 px-4 rounded-md float-right text-white" type="submit">
                         Login
                     </button>
