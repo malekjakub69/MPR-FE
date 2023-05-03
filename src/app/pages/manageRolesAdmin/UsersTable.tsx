@@ -101,17 +101,24 @@ export const UsersTable: FC<IProps> = () => {
                                 <td>
                                     <RadioGroup row className="radio" value={user.fields.role} onChange={(e) => changeRole({ user, newRole: e.target.value })}>
                                         <FormControlLabel value={"ADMIN"} control={<Radio />} label="Administrátor" />
-                                        <FormControlLabel value={"PROJECT_MANAGER"} control={<Radio />} label="Projektový manažér" />
-                                        <FormControlLabel value={"USER"} control={<Radio />} label="Uživatel" />
+                                        <FormControlLabel
+                                            value={"PROJECT_MANAGER"}
+                                            control={<Radio />}
+                                            label="Projektový manažér"
+                                            disabled={user.pk === auth.user?.pk}
+                                        />
+                                        <FormControlLabel value={"USER"} control={<Radio />} label="Uživatel" disabled={user.pk === auth.user?.pk} />
                                     </RadioGroup>
                                 </td>
                                 <td width={80}>
-                                    <IcoDelete
-                                        className="ml-4 cursor-pointer  mx-auto mt-1"
-                                        width={"30px"}
-                                        fill="red"
-                                        onClick={() => showDeleteUserDialog(user)}
-                                    />
+                                    {user.pk !== auth.user?.pk && (
+                                        <IcoDelete
+                                            className="ml-4 cursor-pointer  mx-auto mt-1"
+                                            width={"30px"}
+                                            fill="red"
+                                            onClick={() => showDeleteUserDialog(user)}
+                                        />
+                                    )}
                                 </td>
                             </tr>
                         );
